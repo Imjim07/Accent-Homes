@@ -353,6 +353,13 @@ input, textarea, select { font-family: var(--font-body); }
 @media (max-width: 600px) {
   .stats-grid { grid-template-columns: 1fr; }
 }
+
+.id-thumb { width:60px;height:40px;object-fit:cover;border-radius:4px;border:1px solid #EBEBEB;cursor:zoom-in;transition:transform 0.2s; }
+.id-thumb:hover { transform:scale(1.08); }
+.abtn-approve { background:rgba(45,106,79,0.1);color:#2D6A4F; }
+.abtn-approve:hover { background:#2D6A4F;color:#fff; }
+.abtn-reject  { background:rgba(176,58,46,0.1);color:#B03A2E; }
+.abtn-reject:hover  { background:#B03A2E;color:#fff; }
 </style>
 </head>
 <body>
@@ -1489,8 +1496,32 @@ async function saveHostCard() {
   setTimeout(() => msg.style.display = 'none', 3000);
 }
 
+
+function viewIdLightbox(url) {
+  document.getElementById('idLightboxImg').src = url;
+  document.getElementById('idLightbox').classList.add('open');
+}
+
+async function updateBookingStatus(id, status) {
+  if (fbReady) {
+    await db.collection("bookings").doc(id).update({ status });
+  } else {
+    const list = JSON.parse(localStorage.getItem("ah_bookings") || "[]");
+    const i = list.findIndex(x => x.id === id);
+    if (i > -1) list[i].status = status;
+    localStorage.setItem("ah_bookings", JSON.stringify(list));
+  }
+  loadAll();
+}
+
 // ── INIT ──
 initFirebase();
 </script>
+
+<!-- ID Lightbox -->
+<div class="id-lightbox" id="idLightbox" onclick="this.classList.remove('open')">
+  <button class="id-lb-close" onclick="document.getElementById('idLightbox').classList.remove('open')">✕</button>
+  <img id="idLightboxImg" src="" alt="Guest ID">
+</div>
 </body>
 </html>
