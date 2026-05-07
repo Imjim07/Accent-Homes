@@ -2200,11 +2200,11 @@ async function openPay(id){
   if (!l) return;
   currentAptData = l;
   resetPayModal();
+  document.body.style.overflow = 'hidden';
   document.getElementById("payName").textContent  = l.name;
   document.getElementById("payLoc").textContent   = l.location || "Asaba, Delta State";
   document.getElementById("payPrice").textContent = "₦" + Number(l.priceNight||0).toLocaleString() + "/night";
   document.getElementById("payOverlay").classList.add("open");
-  document.body.style.overflow = "hidden";
 }
 
 function closePay(){
@@ -2214,14 +2214,14 @@ function closePay(){
 }
 
 function calcPay(){
-  if(!currentListing)return;
+  if(!currentAptData)return;
   const ci=document.getElementById("pIn").value;
   const co=document.getElementById("pOut").value;
   if(!ci||!co)return;
   const nights=Math.ceil((new Date(co)-new Date(ci))/(1000*60*60*24));
   if(nights<=0)return;
-  const rent=Number(currentListing.priceNight||0)*nights;
-  const caution=Number(currentListing.cautionDeposit||0);
+  const rent=Number(currentAptData.priceNight||0)*nights;
+  const caution=Number(currentAptData.cautionDeposit||0);
   document.getElementById("pNightsLbl").textContent=`Rent (${nights} night${nights>1?'s':''})`;
   document.getElementById("pRent").textContent="₦"+rent.toLocaleString();
   document.getElementById("pCaution").textContent="₦"+caution.toLocaleString();
@@ -2240,8 +2240,8 @@ async function initPay(){
   const nights=Math.ceil((new Date(co)-new Date(ci))/(1000*60*60*24));
   if(nights<=0){errEl.textContent="Check-out must be after check-in.";errEl.style.display="block";return;}
   errEl.style.display="none";
-  const rent=Number(currentListing.priceNight||0)*nights;
-  const caution=Number(currentListing.cautionDeposit||0);
+  const rent=Number(currentAptData.priceNight||0)*nights;
+  const caution=Number(currentAptData.cautionDeposit||0);
   const total=rent+caution;
   const ref="AH-"+Date.now();
   const btn=document.getElementById("payBtn");
@@ -2252,16 +2252,16 @@ async function initPay(){
     metadata:{custom_fields:[
       {display_name:"Guest Name",variable_name:"guest_name",value:name},
       {display_name:"Phone",variable_name:"phone",value:phone},
-      {display_name:"Apartment",variable_name:"apartment",value:currentListing.name},
+      {display_name:"Apartment",variable_name:"apartment",value:currentAptData.name},
       {display_name:"Check-In",variable_name:"check_in",value:ci},
       {display_name:"Check-Out",variable_name:"check_out",value:co},
     ]},
     callback:async function(res){
-      await saveBooking({ref:res.reference,guestName:name,phone,email,apartment:currentListing.name,apartmentId:currentListing.id,location:currentListing.location||"",checkIn:ci,checkOut:co,nights,rent,caution,total,status:"confirmed",createdAt:new Date().toISOString()});
-      await updateListing(currentListing.id,{status:"booked",available:false});
+      await saveBooking({ref:res.reference,guestName:name,phone,email,apartment:currentAptData.name,apartmentId:currentAptData.id,location:currentAptData.location||"",checkIn:ci,checkOut:co,nights,rent,caution,total,status:"confirmed",createdAt:new Date().toISOString()});
+      await updateListing(currentAptData.id,{status:"booked",available:false});
       loadListings();
       closePay();
-      showSuccess(name,currentListing.name,ref);
+      showSuccess(name,currentAptData.name,ref);
     },
     onClose:function(){btn.disabled=false;btn.textContent="Proceed to Payment →";}
   });
@@ -2557,7 +2557,8 @@ function openAptModal(id) {
 function closeAptModal() {
   document.getElementById('aptOverlay').classList.remove('open');
   document.body.style.overflow = '';
-  currentAptData = null;
+  // Note: currentAptData is NOT nulled here
+  // openPay() will reset it when called
 }
 
 function handleAptOverlayClick(e) {
@@ -2585,8 +2586,9 @@ function updateAptImg() {
 
 function aptModalBook() {
   if (!currentAptData) return;
+  const aptId = currentAptData.id; // save ID before closing modal
   closeAptModal();
-  openPay(currentAptData.id);
+  openPay(aptId);
 }
 
 // Keyboard nav for modal
