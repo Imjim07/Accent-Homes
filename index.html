@@ -1050,6 +1050,169 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   .neighbourhood-intro { flex-direction: column; align-items: flex-start; }
 }
 
+
+/* ============================================================
+   BOOKING FLOW — MULTI-STEP
+   ============================================================ */
+.pay-steps {
+  display: flex; align-items: center; gap: 0;
+  margin-bottom: 24px; padding: 0 28px;
+}
+.pay-step {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.72rem; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ash-lt); flex: 1;
+}
+.pay-step.active { color: var(--charcoal); }
+.pay-step.done   { color: var(--green); }
+.pay-step-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--ash-faint); color: var(--ash-lt);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
+  transition: all 0.3s;
+}
+.pay-step.active .pay-step-num { background: var(--charcoal); color: #fff; }
+.pay-step.done   .pay-step-num { background: var(--green); color: #fff; }
+.pay-step-line {
+  flex: 1; height: 1.5px; background: var(--ash-faint);
+  margin: 0 8px; transition: background 0.3s;
+}
+.pay-step-line.done { background: var(--green); }
+
+/* Step panels */
+.pay-step-panel { display: none; }
+.pay-step-panel.active { display: block; }
+
+/* ID Upload zone */
+.id-upload-zone {
+  border: 2px dashed var(--ash-faint); border-radius: var(--radius);
+  padding: 28px; text-align: center; cursor: pointer;
+  transition: all 0.25s; background: #fafafa; position: relative;
+}
+.id-upload-zone:hover { border-color: var(--ash); background: var(--ash-faint); }
+.id-upload-zone.has-file { border-color: var(--green); border-style: solid; background: rgba(45,106,79,0.04); }
+.id-upload-icon { font-size: 2rem; margin-bottom: 8px; }
+.id-upload-text { font-size: 0.85rem; color: var(--ash); font-weight: 500; }
+.id-upload-sub  { font-size: 0.72rem; color: var(--ash-lt); margin-top: 4px; }
+.id-preview {
+  width: 100%; max-height: 160px; object-fit: cover;
+  border-radius: var(--radius); margin-top: 12px; display: none;
+}
+.id-upload-progress {
+  display: none; margin-top: 12px;
+}
+.id-progress-bar-wrap {
+  background: var(--ash-faint); border-radius: 20px; height: 4px; overflow: hidden;
+}
+.id-progress-bar {
+  background: var(--ash); height: 4px; width: 0%;
+  transition: width 0.3s; border-radius: 20px;
+}
+.id-accepted-types {
+  display: flex; gap: 8px; justify-content: center;
+  flex-wrap: wrap; margin-top: 12px;
+}
+.id-type-chip {
+  background: var(--ash-faint); color: var(--ash);
+  font-size: 0.68rem; padding: 3px 10px; border-radius: 20px; font-weight: 500;
+}
+
+/* Booking summary */
+.booking-summary {
+  background: var(--ash-faint); border-radius: var(--radius);
+  padding: 18px; margin-bottom: 20px;
+}
+.bs-row {
+  display: flex; justify-content: space-between;
+  font-size: 0.875rem; color: var(--ash); padding: 4px 0;
+}
+.bs-row.total {
+  border-top: 1px solid rgba(61,61,61,0.12);
+  margin-top: 10px; padding-top: 12px;
+  font-weight: 700; font-size: 1rem;
+}
+.bs-row.total span:last-child {
+  font-family: var(--font-display); font-size: 1.3rem; color: var(--charcoal);
+}
+.bs-apt-name {
+  font-family: var(--font-display); font-size: 1.1rem;
+  color: var(--charcoal); margin-bottom: 12px; font-weight: 400;
+}
+
+/* Step nav buttons */
+.pay-step-nav {
+  display: flex; gap: 10px; margin-top: 20px;
+}
+.btn-step-back {
+  background: var(--ash-faint); color: var(--ash);
+  padding: 12px 22px; border-radius: var(--radius);
+  border: none; cursor: pointer; font-size: 0.78rem;
+  font-weight: 600; font-family: var(--font-body);
+  transition: all 0.25s; letter-spacing: 0.06em;
+}
+.btn-step-back:hover { background: #ddd; }
+.btn-step-next {
+  flex: 1; background: var(--charcoal); color: #fff;
+  padding: 12px 22px; border-radius: var(--radius);
+  border: none; cursor: pointer; font-size: 0.78rem;
+  font-weight: 700; font-family: var(--font-body);
+  transition: all 0.25s; letter-spacing: 0.08em; text-transform: uppercase;
+}
+.btn-step-next:hover { background: var(--ash); }
+.btn-step-next:disabled { background: var(--ash-faint); color: var(--ash-lt); cursor: not-allowed; }
+
+/* Optional account creation */
+.account-create-section {
+  background: var(--ash-faint); border-radius: var(--radius-lg);
+  padding: 24px; margin-top: 20px;
+}
+.account-create-title {
+  font-family: var(--font-display); font-size: 1.2rem;
+  color: var(--charcoal); margin-bottom: 6px; font-weight: 400;
+}
+.account-create-sub {
+  font-size: 0.82rem; color: var(--ash-lt); margin-bottom: 18px; line-height: 1.6;
+}
+.account-toggle {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; cursor: pointer;
+}
+.account-toggle input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--charcoal); }
+.account-toggle label { font-size: 0.875rem; color: var(--ash); cursor: pointer; font-weight: 500; }
+.account-fields { display: none; }
+.account-fields.show { display: block; }
+
+/* ID viewer in admin */
+.id-thumb {
+  width: 60px; height: 40px; object-fit: cover;
+  border-radius: 4px; border: 1px solid var(--ash-faint);
+  cursor: zoom-in; transition: transform 0.2s;
+}
+.id-thumb:hover { transform: scale(1.1); }
+.status-pending  { background: rgba(201,169,110,0.15); color: #8B6914; }
+.status-approved { background: rgba(45,106,79,0.12);  color: var(--green); }
+.status-rejected { background: rgba(176,58,46,0.12);  color: var(--red); }
+.abtn-approve { background: rgba(45,106,79,0.1); color: var(--green); }
+.abtn-approve:hover { background: var(--green); color: #fff; }
+.abtn-reject  { background: rgba(176,58,46,0.1); color: var(--red); }
+.abtn-reject:hover  { background: var(--red); color: #fff; }
+
+/* ID lightbox in admin */
+.id-lightbox {
+  display: none; position: fixed; inset: 0; z-index: 5000;
+  background: rgba(0,0,0,0.9); align-items: center; justify-content: center;
+}
+.id-lightbox.open { display: flex; }
+.id-lightbox img { max-width: 90vw; max-height: 85vh; object-fit: contain; border-radius: var(--radius); }
+.id-lb-close {
+  position: fixed; top: 20px; right: 20px;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: #fff; width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1.1rem;
+}
+
 /* PAYMENT MODAL */
 .pay-overlay { display:none; position:fixed; inset:0; z-index:4000; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:24px; }
 .pay-overlay.open { display:flex; }
@@ -1472,7 +1635,7 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
               </div>
             </div>
             <div style="margin-top:20px;padding-top:18px;border-top:1px solid rgba(247,245,242,0.07);display:flex;align-items:center;gap:10px;">
-              <span style="background:rgba(139,94,60,0.15);border:1px solid rgba(139,94,60,0.3);border-radius:20px;padding:5px 14px;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--bronze-lt);font-weight:600;">Launching 2026</span>
+              <span style="background:rgba(139,94,60,0.15);border:1px solid rgba(139,94,60,0.3);border-radius:20px;padding:5px 14px;font-size:0.65rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--bronze-lt);font-weight:600;">Launching 2025</span>
               <span style="color:rgba(255,255,255,0.2);font-size:0.75rem;">Limited early access</span>
             </div>
           </div>
@@ -1564,7 +1727,7 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Accent Homes. All rights reserved.</p>
+      <p>© 2025 Accent Homes. All rights reserved.</p>
       <a href="https://capricornhub.com" target="_blank">Built by Capricorn Hub</a>
     </div>
   </div>
@@ -1650,33 +1813,152 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
 </div>
 
 <!-- Payment Modal -->
-<div class="pay-overlay" id="payOverlay">
-  <div class="pay-modal">
+<div class="pay-overlay" id="payOverlay" onclick="handlePayOverlay(event)">
+  <div class="pay-modal" style="max-width:580px;">
     <div class="pay-head">
-      <h3>Book Residence</h3>
+      <h3 id="payModalTitle">Book Residence</h3>
       <button class="pay-close" onclick="closePay()">✕</button>
     </div>
     <div class="pay-apt-bar">
       <div><div class="pay-apt-name" id="payName">—</div><div class="pay-apt-loc" id="payLoc">—</div></div>
       <div class="pay-apt-price" id="payPrice">—</div>
     </div>
+
+    <!-- Step indicators -->
+    <div class="pay-steps" style="padding:20px 28px 0;">
+      <div class="pay-step active" id="step-ind-1">
+        <div class="pay-step-num">1</div>
+        <span>Details</span>
+      </div>
+      <div class="pay-step-line" id="step-line-1"></div>
+      <div class="pay-step" id="step-ind-2">
+        <div class="pay-step-num">2</div>
+        <span>ID Upload</span>
+      </div>
+      <div class="pay-step-line" id="step-line-2"></div>
+      <div class="pay-step" id="step-ind-3">
+        <div class="pay-step-num">3</div>
+        <span>Payment</span>
+      </div>
+    </div>
+
     <div class="pay-body">
-      <div class="pay-frow">
-        <div class="pay-fg"><label>Full Name</label><input type="text" id="pName" placeholder="Your full name"></div>
-        <div class="pay-fg"><label>WhatsApp</label><input type="tel" id="pPhone" placeholder="+234..."></div>
+
+      <!-- STEP 1: Guest Details -->
+      <div class="pay-step-panel active" id="pay-panel-1">
+        <div class="pay-frow">
+          <div class="pay-fg"><label>Full Name</label><input type="text" id="pName" placeholder="Your full name"></div>
+          <div class="pay-fg"><label>WhatsApp</label><input type="tel" id="pPhone" placeholder="+234..."></div>
+        </div>
+        <div class="pay-fg"><label>Email Address</label><input type="email" id="pEmail" placeholder="your@email.com"></div>
+        <div class="pay-frow">
+          <div class="pay-fg"><label>Check-In</label><input type="date" id="pIn" onchange="calcPay()"></div>
+          <div class="pay-fg"><label>Check-Out</label><input type="date" id="pOut" onchange="calcPay()"></div>
+        </div>
+        <div class="pay-summary" id="paySummary" style="display:none">
+          <div class="pay-row"><span id="pNightsLbl">Rent (0 nights)</span><span id="pRent">₦0</span></div>
+          <div class="pay-row"><span>Caution Deposit (refundable)</span><span id="pCaution">₦0</span></div>
+          <div class="pay-row total"><span>Total Due Now</span><span id="pTotal">₦0</span></div>
+        </div>
+        <p class="pay-err" id="payErr1" style="display:none;color:var(--red);font-size:0.78rem;margin-top:8px;"></p>
+        <div class="pay-step-nav">
+          <button class="btn-step-next" onclick="goToStep(2)">Continue → Upload ID</button>
+        </div>
       </div>
-      <div class="pay-fg"><label>Email Address</label><input type="email" id="pEmail" placeholder="your@email.com"></div>
-      <div class="pay-frow">
-        <div class="pay-fg"><label>Check-In</label><input type="date" id="pIn" onchange="calcPay()"></div>
-        <div class="pay-fg"><label>Check-Out</label><input type="date" id="pOut" onchange="calcPay()"></div>
+
+      <!-- STEP 2: ID Upload -->
+      <div class="pay-step-panel" id="pay-panel-2">
+        <p style="font-size:0.85rem;color:var(--ash-lt);margin-bottom:16px;line-height:1.7;">
+          Please upload a clear photo of a valid government-issued ID. This will be verified at arrival.
+        </p>
+        <div class="id-upload-zone" id="idUploadZone"
+          onclick="document.getElementById('idFileInput').click()"
+          ondragover="event.preventDefault();this.style.borderColor='var(--ash)'"
+          ondragleave="this.style.borderColor=''"
+          ondrop="handleIdDrop(event)">
+          <div class="id-upload-icon">🪪</div>
+          <div class="id-upload-text">Click or drag your ID here</div>
+          <div class="id-upload-sub">Max 5MB · JPG, PNG, PDF</div>
+          <div class="id-accepted-types">
+            <span class="id-type-chip">NIN Slip</span>
+            <span class="id-type-chip">Passport</span>
+            <span class="id-type-chip">Driver's Licence</span>
+            <span class="id-type-chip">Voter's Card</span>
+          </div>
+          <input type="file" id="idFileInput" accept="image/*,.pdf" style="display:none" onchange="handleIdUpload(this.files[0])">
+          <img id="idPreview" class="id-preview" src="" alt="ID Preview">
+        </div>
+        <div class="id-upload-progress" id="idUploadProgress">
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+            <span style="font-size:0.75rem;color:var(--ash);" id="idUploadName">Uploading…</span>
+            <span style="font-size:0.75rem;color:var(--ash-lt);" id="idUploadPct">0%</span>
+          </div>
+          <div class="id-progress-bar-wrap">
+            <div class="id-progress-bar" id="idProgressBar"></div>
+          </div>
+        </div>
+        <p id="idUploadSuccess" style="display:none;color:var(--green);font-size:0.8rem;margin-top:8px;">✅ ID uploaded successfully.</p>
+        <p class="pay-err" id="payErr2" style="display:none;color:var(--red);font-size:0.78rem;margin-top:8px;"></p>
+        <div class="pay-step-nav">
+          <button class="btn-step-back" onclick="goToStep(1)">← Back</button>
+          <button class="btn-step-next" id="step2Next" onclick="goToStep(3)" disabled>Review & Pay →</button>
+        </div>
       </div>
-      <div class="pay-summary" id="paySummary" style="display:none">
-        <div class="pay-row"><span id="pNightsLbl">Rent (0 nights)</span><span id="pRent">₦0</span></div>
-        <div class="pay-row"><span>Caution Deposit (refundable)</span><span id="pCaution">₦0</span></div>
-        <div class="pay-row total"><span>Total Due Now</span><span id="pTotal">₦0</span></div>
+
+      <!-- STEP 3: Review & Pay -->
+      <div class="pay-step-panel" id="pay-panel-3">
+        <div class="booking-summary">
+          <div class="bs-apt-name" id="bsAptName">—</div>
+          <div class="bs-row"><span>📍 Location</span><span id="bsLoc">—</span></div>
+          <div class="bs-row"><span>📅 Check-In</span><span id="bsIn">—</span></div>
+          <div class="bs-row"><span>📅 Check-Out</span><span id="bsOut">—</span></div>
+          <div class="bs-row"><span>🌙 Nights</span><span id="bsNights">—</span></div>
+          <div class="bs-row"><span>👤 Guest</span><span id="bsGuest">—</span></div>
+          <div class="bs-row"><span>🪪 ID</span><span id="bsId" style="color:var(--green);">✅ Uploaded</span></div>
+          <div class="bs-row"><span id="bsRentLbl">Rent</span><span id="bsRent">₦0</span></div>
+          <div class="bs-row"><span>Caution (refundable)</span><span id="bsCaution">₦0</span></div>
+          <div class="bs-row total"><span>Total Due</span><span id="bsTotal">₦0</span></div>
+        </div>
+        <p style="font-size:0.75rem;color:var(--ash-lt);margin-bottom:16px;line-height:1.6;">
+          By proceeding you agree that your ID will be verified at arrival. The caution deposit is fully refundable on checkout.
+        </p>
+        <button class="pay-btn" id="payBtn" onclick="initPay()">Pay Now →</button>
+        <p class="pay-err" id="payErr3" style="display:none;color:var(--red);font-size:0.78rem;margin-top:8px;"></p>
+        <div class="pay-step-nav" style="margin-top:10px;">
+          <button class="btn-step-back" onclick="goToStep(2)">← Back</button>
+        </div>
       </div>
-      <button class="pay-btn" id="payBtn" onclick="initPay()">Proceed to Payment →</button>
-      <p class="pay-err" id="payErr">Please fill all fields and select your dates.</p>
+
+      <!-- STEP 4: Confirmation + Optional Account -->
+      <div class="pay-step-panel" id="pay-panel-4">
+        <div style="text-align:center;padding:20px 0;">
+          <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+          <div style="font-family:var(--font-display);font-size:1.6rem;color:var(--charcoal);margin-bottom:8px;font-weight:400;">Booking Confirmed!</div>
+          <p style="font-size:0.875rem;color:var(--ash-lt);line-height:1.7;margin-bottom:6px;" id="confirmMsg">Your booking is confirmed.</p>
+          <p style="font-size:0.78rem;color:var(--ash-lt);">Reference: <strong id="confirmRef">—</strong></p>
+        </div>
+
+        <!-- Optional account creation -->
+        <div class="account-create-section">
+          <div class="account-create-title">Save your details for next time</div>
+          <div class="account-create-sub">Create a free account to track your bookings and rebook faster.</div>
+          <div class="account-toggle">
+            <input type="checkbox" id="createAccountCheck" onchange="toggleAccountFields()">
+            <label for="createAccountCheck">Yes, create an account for me</label>
+          </div>
+          <div class="account-fields" id="accountFields">
+            <div class="pay-fg" style="margin-bottom:12px;">
+              <label>Password</label>
+              <input type="password" id="accountPassword" placeholder="Create a password (min 6 characters)">
+            </div>
+            <button class="pay-btn" onclick="createGuestAccount()" style="margin-top:4px;">Create Account →</button>
+            <p id="accountMsg" style="font-size:0.78rem;margin-top:8px;display:none;"></p>
+          </div>
+        </div>
+
+        <button onclick="closePay()" style="width:100%;margin-top:16px;background:none;border:1.5px solid var(--ash-faint);border-radius:var(--radius);padding:12px;font-size:0.78rem;font-weight:600;cursor:pointer;color:var(--ash);font-family:var(--font-body);">Close</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1912,29 +2194,23 @@ async function submitLagos(){
 // ============================================================
 // PAYMENT — PAYSTACK
 // ============================================================
-let currentListing=null;
-
 async function openPay(id){
-  const listings=await getListings();
-  const l=listings.find(x=>x.id===id);
-  if(!l)return;
-  currentListing=l;
-  document.getElementById("payName").textContent=l.name;
-  document.getElementById("payLoc").textContent=l.location||"Asaba, Delta State";
-  document.getElementById("payPrice").textContent="₦"+Number(l.priceNight||0).toLocaleString()+"/night";
-  ["pName","pPhone","pEmail","pIn","pOut"].forEach(id=>document.getElementById(id).value="");
-  document.getElementById("paySummary").style.display="none";
-  document.getElementById("payErr").style.display="none";
-  document.getElementById("payBtn").disabled=false;
-  document.getElementById("payBtn").textContent="Proceed to Payment →";
+  const listings = await getListings();
+  const l = listings.find(x => x.id === id);
+  if (!l) return;
+  currentAptData = l;
+  resetPayModal();
+  document.getElementById("payName").textContent  = l.name;
+  document.getElementById("payLoc").textContent   = l.location || "Asaba, Delta State";
+  document.getElementById("payPrice").textContent = "₦" + Number(l.priceNight||0).toLocaleString() + "/night";
   document.getElementById("payOverlay").classList.add("open");
-  document.body.style.overflow="hidden";
+  document.body.style.overflow = "hidden";
 }
 
 function closePay(){
   document.getElementById("payOverlay").classList.remove("open");
-  document.body.style.overflow="";
-  currentListing=null;
+  document.body.style.overflow = "";
+  currentAptData = null;
 }
 
 function calcPay(){
@@ -1992,18 +2268,7 @@ async function initPay(){
   handler.openIframe();
 }
 
-function showSuccess(name,apt,ref){
-  const el=document.createElement("div");
-  el.style.cssText="position:fixed;inset:0;z-index:5000;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;padding:24px";
-  el.innerHTML=`<div style="background:var(--white);border-radius:14px;padding:48px;max-width:440px;width:100%;text-align:center">
-    <div style="font-size:3rem;margin-bottom:16px">🎉</div>
-    <div style="font-family:var(--font-display);font-size:1.8rem;color:var(--charcoal);margin-bottom:10px;font-weight:400">Booking Confirmed!</div>
-    <p style="color:var(--ash-lt);font-size:0.9rem;line-height:1.7;margin-bottom:20px">Thank you <strong>${name}</strong>. Your booking for <strong>${apt}</strong> is confirmed.<br>Reference: <strong>${ref}</strong></p>
-    <p style="color:var(--ash-lt);font-size:0.85rem;margin-bottom:28px">We'll contact you on WhatsApp with check-in details.</p>
-    <button onclick="this.closest('div[style]').remove()" style="background:var(--bronze);color:#fff;border:none;padding:12px 32px;border-radius:var(--radius);font-family:var(--font-body);font-weight:600;cursor:pointer;font-size:0.85rem">Done</button>
-  </div>`;
-  document.body.appendChild(el);
-}
+// showSuccess replaced by Step 4 confirmation panel
 
 document.getElementById("payOverlay").addEventListener("click",function(e){if(e.target===this)closePay();});
 
@@ -2376,11 +2641,430 @@ function filterPlaces(cat, btn) {
   });
 }
 
+
+// ============================================================
+// DYNAMIC CONTENT — Neighbourhood, Testimonials, Gallery, Host
+// ============================================================
+async function loadDynamicContent() {
+  await Promise.all([
+    loadNeighbourhood(),
+    loadTestimonials(),
+    loadGallery(),
+    loadHostCard()
+  ]);
+}
+
+async function getDynCollection(name) {
+  if (fbReady) {
+    try {
+      const s = await db.collection(name).get();
+      return s.docs.map(d => ({ id:d.id, ...d.data() }));
+    } catch(e) { return []; }
+  }
+  return JSON.parse(localStorage.getItem("ah_" + name) || "[]");
+}
+
+// ── NEIGHBOURHOOD ─────────────────────────────────────────────
+async function loadNeighbourhood() {
+  const places = await getDynCollection("neighbourhood");
+  if (!places.length) return; // keep hardcoded if none in DB
+
+  const catIcons = { dining:'🍽', fitness:'💪', shopping:'🛍', health:'🏥', leisure:'🎭' };
+  const catLabels = { dining:'Dining', fitness:'Fitness', shopping:'Shopping', health:'Health', leisure:'Leisure' };
+
+  const grid = document.getElementById('placesGrid');
+  if (!grid) return;
+
+  grid.innerHTML = places.map(p => `
+    <div class="place-card show" data-cat="${p.category||'leisure'}">
+      <div class="place-img">
+        <img src="${p.image||'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=600'}" alt="${p.name}" loading="lazy">
+        <span class="place-cat-badge">${catIcons[p.category]||'📍'} ${catLabels[p.category]||p.category}</span>
+        <span class="place-dist-badge">${p.distance||''}</span>
+      </div>
+      <div class="place-body">
+        <div class="place-name">${p.name}</div>
+        <div class="place-desc">${p.description||''}</div>
+        <div class="place-meta">
+          <span class="place-hours">🕐 ${p.hours||''}</span>
+          <span class="place-open">Open Now</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Update stat count
+  const statEl = document.querySelector('.nb-hl-stat .val');
+  if (statEl) statEl.textContent = places.length + '+';
+}
+
+// ── TESTIMONIALS ──────────────────────────────────────────────
+async function loadTestimonials() {
+  const list = await getDynCollection("testimonials");
+  if (!list.length) return; // keep hardcoded if none in DB
+
+  const grid = document.querySelector('.testimonials-grid');
+  if (!grid) return;
+
+  const stars = n => '★'.repeat(n) + '☆'.repeat(5-n);
+  grid.innerHTML = list.map(t => `
+    <div class="tcard reveal">
+      <div class="tcard-quote">"</div>
+      <div class="stars">${stars(t.rating||5)}</div>
+      <p class="tcard-text">${t.reviewText}</p>
+      <div class="tcard-author">
+        <div class="avatar">${t.initials||'?'}</div>
+        <div>
+          <div class="author-name">${t.guestName}</div>
+          <div class="author-role">${t.role||''}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  initReveal();
+}
+
+// ── GALLERY ───────────────────────────────────────────────────
+async function loadGallery() {
+  const photos = await getDynCollection("gallery");
+  if (!photos.length) return; // keep hardcoded Unsplash photos
+
+  // Sort by order field
+  photos.sort((a,b) => (a.order||0) - (b.order||0));
+
+  const grid = document.querySelector('.gallery-grid');
+  if (!grid) return;
+
+  const items = photos.slice(0,5); // max 5 for the grid layout
+  grid.innerHTML = items.map((p, i) => `
+    <div class="g-item ${i===0?'tall':''}" onclick="openLb('${p.url}')">
+      <img src="${p.url}" alt="Gallery photo ${i+1}" loading="lazy">
+      <div class="g-overlay"><div class="g-icon">⊕</div></div>
+    </div>
+  `).join('');
+}
+
+// ── HOST CARD ─────────────────────────────────────────────────
+async function loadHostCard() {
+  let data = {};
+  if (fbReady) {
+    try {
+      const doc = await db.collection("settings").doc("hostCard").get();
+      if (doc.exists) data = doc.data();
+    } catch(e) {}
+  } else {
+    data = JSON.parse(localStorage.getItem("ah_hostCard") || "{}");
+  }
+  if (!data.name) return; // keep defaults if nothing saved
+
+  // Update modal host card elements
+  const nameEl  = document.querySelector('.host-name');
+  const titleEl = document.querySelector('.host-title');
+  const imgEl   = document.querySelector('.host-avatar');
+
+  if (nameEl  && data.name)  nameEl.textContent  = data.name;
+  if (titleEl && data.title) titleEl.textContent  = data.title;
+  if (imgEl   && data.photo) imgEl.src             = data.photo;
+
+  // Stats
+  const statEls = document.querySelectorAll('.host-stat-val');
+  if (statEls[0] && data.rating)   statEls[0].textContent = data.rating + ' ★';
+  if (statEls[1] && data.response) statEls[1].textContent = data.response;
+  if (statEls[2] && data.since)    statEls[2].textContent = data.since;
+
+  // Response time
+  const respEl = document.querySelector('.host-response');
+  if (respEl && data.responseTime) {
+    respEl.innerHTML = '⏱ ' + data.responseTime;
+  }
+}
+
+
+// ============================================================
+// MULTI-STEP BOOKING FLOW
+// ============================================================
+let currentStep    = 1;
+let uploadedIdUrl  = '';
+
+function goToStep(step) {
+  // Validate before moving forward
+  if (step === 2 && currentStep === 1) {
+    const err = validateStep1();
+    if (err) { showErr('payErr1', err); return; }
+    hideErr('payErr1');
+    populateReview();
+  }
+  if (step === 3 && currentStep === 2) {
+    if (!uploadedIdUrl) { showErr('payErr2', 'Please upload a valid ID before continuing.'); return; }
+    hideErr('payErr2');
+    populateReview();
+  }
+
+  // Hide all panels
+  document.querySelectorAll('.pay-step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('pay-panel-' + step).classList.add('active');
+
+  // Update step indicators
+  for (let i = 1; i <= 3; i++) {
+    const ind  = document.getElementById('step-ind-' + i);
+    const line = document.getElementById('step-line-' + i);
+    ind.classList.remove('active','done');
+    if (line) line.classList.remove('done');
+    if (i < step)  { ind.classList.add('done'); if(line) line.classList.add('done'); }
+    if (i === step) ind.classList.add('active');
+  }
+
+  currentStep = step;
+  document.getElementById('payModalTitle').textContent =
+    step === 1 ? 'Book Residence' :
+    step === 2 ? 'Upload ID' :
+    step === 3 ? 'Review & Pay' : 'Booking Confirmed';
+}
+
+function validateStep1() {
+  const name  = document.getElementById('pName').value.trim();
+  const phone = document.getElementById('pPhone').value.trim();
+  const email = document.getElementById('pEmail').value.trim();
+  const ci    = document.getElementById('pIn').value;
+  const co    = document.getElementById('pOut').value;
+  if (!name)  return 'Please enter your full name.';
+  if (!phone) return 'Please enter your WhatsApp number.';
+  if (!email || !email.includes('@')) return 'Please enter a valid email address.';
+  if (!ci)    return 'Please select a check-in date.';
+  if (!co)    return 'Please select a check-out date.';
+  const nights = Math.ceil((new Date(co) - new Date(ci)) / (1000*60*60*24));
+  if (nights <= 0) return 'Check-out must be after check-in.';
+  return null;
+}
+
+function showErr(id, msg) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = msg; el.style.display = 'block'; }
+}
+function hideErr(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+
+function populateReview() {
+  if (!currentAptData) return;
+  const ci = document.getElementById('pIn').value;
+  const co = document.getElementById('pOut').value;
+  const nights = Math.ceil((new Date(co) - new Date(ci)) / (1000*60*60*24));
+  const rent   = Number(currentAptData.priceNight||0) * nights;
+  const caution = Number(currentAptData.cautionDeposit||0);
+
+  document.getElementById('bsAptName').textContent = currentAptData.name;
+  document.getElementById('bsLoc').textContent     = currentAptData.location||'Asaba';
+  document.getElementById('bsIn').textContent      = ci;
+  document.getElementById('bsOut').textContent     = co;
+  document.getElementById('bsNights').textContent  = nights + ' night' + (nights>1?'s':'');
+  document.getElementById('bsGuest').textContent   = document.getElementById('pName').value;
+  document.getElementById('bsRentLbl').textContent = 'Rent (' + nights + ' night' + (nights>1?'s':'') + ')';
+  document.getElementById('bsRent').textContent    = '₦' + rent.toLocaleString();
+  document.getElementById('bsCaution').textContent = '₦' + caution.toLocaleString();
+  document.getElementById('bsTotal').textContent   = '₦' + (rent+caution).toLocaleString();
+}
+
+// ── ID UPLOAD ─────────────────────────────────────────────────
+function handleIdDrop(e) {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file) handleIdUpload(file);
+}
+
+async function handleIdUpload(file) {
+  if (!file) return;
+  if (file.size > 5 * 1024 * 1024) { showErr('payErr2', 'File is over 5MB. Please compress it first.'); return; }
+
+  const zone     = document.getElementById('idUploadZone');
+  const progress = document.getElementById('idUploadProgress');
+  const bar      = document.getElementById('idProgressBar');
+  const pct      = document.getElementById('idUploadPct');
+  const nameEl   = document.getElementById('idUploadName');
+  const preview  = document.getElementById('idPreview');
+  const success  = document.getElementById('idUploadSuccess');
+  const nextBtn  = document.getElementById('step2Next');
+
+  progress.style.display = 'block';
+  nameEl.textContent     = file.name;
+  bar.style.width        = '30%';
+  pct.textContent        = 'Uploading…';
+  success.style.display  = 'none';
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'accent-homes/guest-ids');
+
+  try {
+    bar.style.width = '60%';
+    const res  = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', { method:'POST', body:fd });
+    bar.style.width = '90%';
+    const data = await res.json();
+
+    if (data.secure_url) {
+      uploadedIdUrl      = data.secure_url;
+      bar.style.width    = '100%';
+      pct.textContent    = 'Done ✓';
+      zone.classList.add('has-file');
+
+      // Show preview if image
+      if (file.type.startsWith('image/')) {
+        preview.src = data.secure_url;
+        preview.style.display = 'block';
+      }
+
+      setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0%'; }, 800);
+      success.style.display = 'block';
+      nextBtn.disabled = false;
+      hideErr('payErr2');
+    } else {
+      throw new Error(data.error ? data.error.message : 'Upload failed');
+    }
+  } catch(err) {
+    progress.style.display = 'none';
+    bar.style.width = '0%';
+    showErr('payErr2', 'Upload failed: ' + err.message);
+  }
+}
+
+// ── PAYMENT — updated initPay ──────────────────────────────────
+async function initPay() {
+  if (!currentAptData) return;
+  const name  = document.getElementById('pName').value.trim();
+  const phone = document.getElementById('pPhone').value.trim();
+  const email = document.getElementById('pEmail').value.trim();
+  const ci    = document.getElementById('pIn').value;
+  const co    = document.getElementById('pOut').value;
+  const nights = Math.ceil((new Date(co) - new Date(ci)) / (1000*60*60*24));
+  const rent   = Number(currentAptData.priceNight||0) * nights;
+  const caution = Number(currentAptData.cautionDeposit||0);
+  const total   = rent + caution;
+  const ref     = 'AH-' + Date.now();
+
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true; btn.textContent = 'Opening payment…';
+
+  const handler = PaystackPop.setup({
+    key: PAYSTACK_KEY, email, amount: total * 100, currency: 'NGN', ref,
+    metadata: { custom_fields: [
+      { display_name:'Guest Name',  variable_name:'guest_name',  value:name },
+      { display_name:'Phone',       variable_name:'phone',       value:phone },
+      { display_name:'Apartment',   variable_name:'apartment',   value:currentAptData.name },
+      { display_name:'Check-In',    variable_name:'check_in',    value:ci },
+      { display_name:'Check-Out',   variable_name:'check_out',   value:co },
+      { display_name:'ID Uploaded', variable_name:'id_url',      value:uploadedIdUrl }
+    ]},
+    callback: async function(res) {
+      await saveBooking({
+        ref: res.reference,
+        guestName: name, phone, email,
+        apartment: currentAptData.name,
+        apartmentId: currentAptData.id,
+        location: currentAptData.location||'',
+        checkIn: ci, checkOut: co, nights, rent, caution, total,
+        idUrl: uploadedIdUrl,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+      });
+      await updateListing(currentAptData.id, { status:'booked', available:false });
+      loadListings();
+
+      // Show confirmation step
+      document.getElementById('confirmMsg').textContent =
+        'Thank you ' + name + '. Your booking for ' + currentAptData.name + ' is confirmed.';
+      document.getElementById('confirmRef').textContent = res.reference;
+      goToStep(4);
+    },
+    onClose: function() {
+      btn.disabled = false;
+      btn.textContent = 'Pay Now →';
+    }
+  });
+  handler.openIframe();
+}
+
+// ── OPTIONAL ACCOUNT CREATION ────────────────────────────────
+function toggleAccountFields() {
+  const show = document.getElementById('createAccountCheck').checked;
+  document.getElementById('accountFields').classList.toggle('show', show);
+}
+
+async function createGuestAccount() {
+  const email    = document.getElementById('pEmail').value.trim();
+  const password = document.getElementById('accountPassword').value;
+  const msgEl    = document.getElementById('accountMsg');
+
+  if (!password || password.length < 6) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = 'Password must be at least 6 characters.';
+    msgEl.style.display = 'block';
+    return;
+  }
+  if (!fbReady || !auth) {
+    msgEl.style.color = 'var(--red)';
+    msgEl.textContent = 'Account creation unavailable in demo mode.';
+    msgEl.style.display = 'block';
+    return;
+  }
+
+  try {
+    await auth.createUserWithEmailAndPassword(email, password);
+    msgEl.style.color   = 'var(--green)';
+    msgEl.textContent   = '✅ Account created! You can log in next time to rebook faster.';
+    msgEl.style.display = 'block';
+    document.getElementById('accountFields').style.display = 'none';
+  } catch(err) {
+    msgEl.style.color   = 'var(--red)';
+    msgEl.textContent   = err.code === 'auth/email-already-in-use'
+      ? 'An account with this email already exists.'
+      : 'Account creation failed: ' + err.message;
+    msgEl.style.display = 'block';
+  }
+}
+
+// ── RESET PAY MODAL ──────────────────────────────────────────
+function resetPayModal() {
+  currentStep   = 1;
+  uploadedIdUrl = '';
+  document.querySelectorAll('.pay-step-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('pay-panel-1').classList.add('active');
+  for (let i = 1; i <= 3; i++) {
+    const ind = document.getElementById('step-ind-' + i);
+    const line = document.getElementById('step-line-' + i);
+    ind.classList.remove('active','done');
+    if (line) line.classList.remove('done');
+  }
+  document.getElementById('step-ind-1').classList.add('active');
+  document.getElementById('step2Next').disabled = true;
+  const zone = document.getElementById('idUploadZone');
+  if (zone) zone.classList.remove('has-file');
+  const preview = document.getElementById('idPreview');
+  if (preview) { preview.src=''; preview.style.display='none'; }
+  document.getElementById('idUploadSuccess').style.display = 'none';
+  document.getElementById('createAccountCheck').checked = false;
+  document.getElementById('accountFields').classList.remove('show');
+  document.getElementById('accountMsg').style.display = 'none';
+  document.getElementById('payModalTitle').textContent = 'Book Residence';
+  ['pName','pPhone','pEmail','pIn','pOut','accountPassword'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('paySummary').style.display = 'none';
+}
+
+function handlePayOverlay(e) {
+  if (e.target === document.getElementById('payOverlay')) closePay();
+}
+
 // ============================================================
 // INIT
 // ============================================================
 initFB();
 loadListings();
+loadDynamicContent();
 initReveal();
 </script>
 </body>
