@@ -384,9 +384,9 @@ section { padding:100px 0; }
   font-size:0.62rem; letter-spacing:0.12em; text-transform:uppercase;
   padding:5px 12px; border-radius:20px; font-weight:600;
 }
-.badge-available { background:rgba(45,106,79,0.92); color:#fff; backdrop-filter:blur(8px); box-shadow:0 2px 8px rgba(45,106,79,0.3); }
-.badge-booked { background:rgba(192,57,43,0.9); color:#fff; backdrop-filter:blur(8px); box-shadow:0 2px 8px rgba(192,57,43,0.3); }
-.badge-unavailable { background:rgba(61,61,61,0.82); color:#fff; backdrop-filter:blur(8px); }
+.badge-available { background:rgba(45,106,79,0.9); color:#fff; backdrop-filter:blur(4px); }
+.badge-booked { background:rgba(139,94,60,0.9); color:#fff; backdrop-filter:blur(4px); }
+.badge-unavailable { background:rgba(61,61,61,0.7); color:#fff; backdrop-filter:blur(4px); }
 .card-body { padding:26px; }
 .card-loc {
   font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase;
@@ -1939,7 +1939,7 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   <div class="hero-content">
     <div class="hero-eyebrow">Asaba, Delta State — Nigeria</div>
     <h1 class="hero-title">
-      Life, with the right<br><em>Accent</em><br>
+      Asaba's Finest<br><em>Address</em><br>Is Yours
     </h1>
     <p class="hero-sub">Experience the pinnacle of luxury living in Asaba. Meticulously appointed residences where every detail speaks of refinement and every stay feels like an event.</p>
     <div class="hero-actions">
@@ -2707,6 +2707,8 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "681909366596",
   appId:             "1:681909366596:web:e995fd9b7eaa1e3e7ab111"
 };
+const CLOUDINARY_CLOUD  = "df5uashml";
+const CLOUDINARY_PRESET = "accent-homes";
 const WHATSAPP  = "2349029478440";
 const PAYSTACK_KEY = "pk_test_68320fa8de09a2c7ca08be638279212d111b6957";
 
@@ -2849,8 +2851,8 @@ async function loadListings(){
           </div>`;
         })()}
         <button class="card-heart" onclick="event.stopPropagation();this.classList.toggle('liked')" title="Save">♡</button>
-        <span class="card-badge ${l.status==='booked'?'badge-booked':l.available===false?'badge-unavailable':'badge-available'}">
-          ${l.status==='booked'?'Booked':l.available===false?'Unavailable':'Available'}
+        <span class="card-badge ${l.status==='booked'?'badge-booked':'badge-avail'}">
+          ${l.status==='booked'?'Booked':'Available'}
         </span>
       </div>
       <!-- Card body — Airbnb style -->
@@ -2952,74 +2954,43 @@ function calcPay(){
   document.getElementById("paySummary").style.display="block";
 }
 
-async function initPay() {
-  if (!currentAptData) return;
-  const name   = document.getElementById('pName').value.trim();
-  const phone  = document.getElementById('pPhone').value.trim();
-  const email  = document.getElementById('pEmail').value.trim();
-  const ci     = document.getElementById('pIn').value;
-  const co     = document.getElementById('pOut').value;
-  const nights = Math.ceil((new Date(co) - new Date(ci)) / (1000*60*60*24));
-  const rent   = Number(currentAptData.priceNight||0) * nights;
-  const caution = Number(currentAptData.cautionDeposit||0);
-  const total   = rent + caution;
-  const ref     = 'AH-' + Date.now();
+async function initPay(){
+  const name=document.getElementById("pName").value.trim();
+  const phone=document.getElementById("pPhone").value.trim();
+  const email=document.getElementById("pEmail").value.trim();
+  const ci=document.getElementById("pIn").value;
+  const co=document.getElementById("pOut").value;
+  const errEl=document.getElementById("payErr");
+  if(!name||!phone||!email||!ci||!co){errEl.textContent="Please fill all fields and select your dates.";errEl.style.display="block";return;}
+  const nights=Math.ceil((new Date(co)-new Date(ci))/(1000*60*60*24));
+  if(nights<=0){errEl.textContent="Check-out must be after check-in.";errEl.style.display="block";return;}
+  errEl.style.display="none";
+  const rent=Number(currentAptData.priceNight||0)*nights;
+  const caution=Number(currentAptData.cautionDeposit||0);
+  const total=rent+caution;
+  const ref="AH-"+Date.now();
+  const btn=document.getElementById("payBtn");
+  btn.disabled=true; btn.textContent="Opening payment…";
 
-  const btn = document.getElementById('payBtn');
-  const errEl = document.getElementById('payErr3');
-  btn.disabled = true;
-  btn.textContent = 'Opening payment…';
-  errEl.style.display = 'none';
-
-  try {
-    const handler = PaystackPop.setup({
-      key: PAYSTACK_KEY,
-      email,
-      amount: total * 100,
-      currency: 'NGN',
-      ref,
-      metadata: { custom_fields: [
-        { display_name:'Guest Name',  variable_name:'guest_name',  value:name },
-        { display_name:'Phone',       variable_name:'phone',       value:phone },
-        { display_name:'Apartment',   variable_name:'apartment',   value:currentAptData.name },
-        { display_name:'Check-In',    variable_name:'check_in',    value:ci },
-        { display_name:'Check-Out',   variable_name:'check_out',   value:co },
-        { display_name:'ID Uploaded', variable_name:'id_url',      value:uploadedIdUrl }
-      ]},
-      callback: async function(res) {
-        await saveBooking({
-          ref: res.reference,
-          guestName: name, phone, email,
-          apartment: currentAptData.name,
-          apartmentId: currentAptData.id,
-          location: currentAptData.location || '',
-          checkIn: ci, checkOut: co, nights, rent, caution, total,
-          idUrl: uploadedIdUrl,
-          status: 'pending',
-          createdAt: new Date().toISOString()
-        });
-        await updateListing(currentAptData.id, { status:'booked', available:false });
-        loadListings();
-
-        document.getElementById('confirmMsg').textContent =
-          'Thank you ' + name + '. Your booking for ' + currentAptData.name + ' is confirmed.';
-        document.getElementById('confirmRef').textContent = res.reference;
-        linkBookingToUser(res.reference);
-        goToStep(4);
-      },
-      onClose: function() {
-        btn.disabled = false;
-        btn.textContent = 'Pay Now →';
-      }
-    });
-    handler.openIframe();
-  } catch(err) {
-    btn.disabled = false;
-    btn.textContent = 'Pay Now →';
-    errEl.textContent = 'Could not open payment: ' + err.message;
-    errEl.style.display = 'block';
-    console.error('Paystack error:', err);
-  }
+  const handler=PaystackPop.setup({
+    key:PAYSTACK_KEY, email, amount:total*100, currency:"NGN", ref,
+    metadata:{custom_fields:[
+      {display_name:"Guest Name",variable_name:"guest_name",value:name},
+      {display_name:"Phone",variable_name:"phone",value:phone},
+      {display_name:"Apartment",variable_name:"apartment",value:currentAptData.name},
+      {display_name:"Check-In",variable_name:"check_in",value:ci},
+      {display_name:"Check-Out",variable_name:"check_out",value:co},
+    ]},
+    callback:async function(res){
+      await saveBooking({ref:res.reference,guestName:name,phone,email,apartment:currentAptData.name,apartmentId:currentAptData.id,location:currentAptData.location||"",checkIn:ci,checkOut:co,nights,rent,caution,total,status:"confirmed",createdAt:new Date().toISOString()});
+      await updateListing(currentAptData.id,{status:"booked",available:false});
+      loadListings();
+      closePay();
+      showSuccess(name,currentAptData.name,ref);
+    },
+    onClose:function(){btn.disabled=false;btn.textContent="Proceed to Payment →";}
+  });
+  handler.openIframe();
 }
 
 // showSuccess replaced by Step 4 confirmation panel
@@ -4408,7 +4379,3 @@ initReveal();
 
 </body>
 </html>
-
-
-
-
