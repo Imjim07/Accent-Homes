@@ -2972,23 +2972,40 @@ async function initPay(){
   const btn=document.getElementById("payBtn");
   btn.disabled=true; btn.textContent="Opening payment…";
 
-  const handler=PaystackPop.setup({
-    key:PAYSTACK_KEY, email, amount:total*100, currency:"NGN", ref,
-    metadata:{custom_fields:[
-      {display_name:"Guest Name",variable_name:"guest_name",value:name},
-      {display_name:"Phone",variable_name:"phone",value:phone},
-      {display_name:"Apartment",variable_name:"apartment",value:currentAptData.name},
-      {display_name:"Check-In",variable_name:"check_in",value:ci},
-      {display_name:"Check-Out",variable_name:"check_out",value:co},
-    ]},
-    callback:async function(res){
-      await saveBooking({ref:res.reference,guestName:name,phone,email,apartment:currentAptData.name,apartmentId:currentAptData.id,location:currentAptData.location||"",checkIn:ci,checkOut:co,nights,rent,caution,total,status:"confirmed",createdAt:new Date().toISOString()});
-      await updateListing(currentAptData.id,{status:"booked",available:false});
+  const paystackCallback = async function(res) {
+    try {
+      await saveBooking({
+        ref:res.reference, guestName:name, phone, email,
+        apartment:currentAptData.name, apartmentId:currentAptData.id,
+        location:currentAptData.location||'',
+        checkIn:ci, checkOut:co, nights, rent, caution, total,
+        idUrl:uploadedIdUrl, status:'pending',
+        createdAt:new Date().toISOString()
+      });
+      await updateListing(currentAptData.id,{status:'booked',available:false});
       loadListings();
-      closePay();
-      showSuccess(name,currentAptData.name,ref);
-    },
-    onClose:function(){btn.disabled=false;btn.textContent="Proceed to Payment →";}
+    } catch(e){ console.error('Booking save error:',e); }
+    const cm=document.getElementById('confirmMsg');
+    const cr=document.getElementById('confirmRef');
+    if(cm) cm.textContent='Thank you '+name+'. Your booking for '+currentAptData.name+' is confirmed.';
+    if(cr) cr.textContent=res.reference;
+    linkBookingToUser(res.reference);
+    goToStep(4);
+  };
+
+  const handler = PaystackPop.setup({
+    key:PAYSTACK_KEY, email:email, amount:total*100,
+    currency:'NGN', ref:ref,
+    metadata:{custom_fields:[
+      {display_name:'Guest Name',variable_name:'guest_name',value:name},
+      {display_name:'Phone',variable_name:'phone',value:phone},
+      {display_name:'Apartment',variable_name:'apartment',value:currentAptData.name},
+      {display_name:'Check-In',variable_name:'check_in',value:ci},
+      {display_name:'Check-Out',variable_name:'check_out',value:co},
+      {display_name:'ID',variable_name:'id_url',value:uploadedIdUrl}
+    ]},
+    callback: paystackCallback,
+    onClose: function(){ btn.disabled=false; btn.textContent='Pay Now →'; }
   });
   handler.openIframe();
 }
@@ -4032,31 +4049,39 @@ function switchProfileTab(tab, btn) {
 
 // ── LOAD PROFILE ──────────────────────────────────────────────
 async function loadUserProfile(user) {
-  const name  = user.displayName || user.email.split('@')[0];
-  const email = user.email;
+  if (!user) return;
+  const name     = user.displayName || user.email.split('@')[0];
+  const email    = user.email;
+  const photo    = user.photoURL;
+  const initials = name.charAt(0).toUpperCase();
+  const imgHtml  = photo
+    ? `<img src="${photo}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`
+    : null;
+
+  // Safe setter helpers — no crash if element missing
+  const setText = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  const setVal  = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+  const setHtml = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
 
   // Nav avatar
-  const navAvatar = document.getElementById('navAvatar');
-  if (user.photoURL) {
-    navAvatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-  } else {
-    navAvatar.textContent = name.charAt(0).toUpperCase();
-  }
+  const navAva = document.getElementById('navAvatar');
+  if (navAva) navAva.innerHTML = imgHtml || initials;
 
-  // Sidebar profile
-  document.getElementById('profileName').textContent       = name;
-  document.getElementById('profileEmail').textContent      = email;
-  document.getElementById('profileNameInput').value        = name;
-  document.getElementById('profileEmailInput').value       = email;
+  // v3 profile sidebar IDs (ps- prefix)
+  setText('psName',  name);
+  setText('psEmail', email);
+  setVal('psNameInput',  name);
+  setVal('psEmailInput', email);
+  if (imgHtml) setHtml('psAvatar', imgHtml);
+  else setText('psAvatar', initials);
 
-  // Profile avatar
-  const avatarEl = document.getElementById('profileAvatarEl');
-  if (user.photoURL) {
-    avatarEl.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
-  } else {
-    avatarEl.textContent = name.charAt(0).toUpperCase();
-    avatarEl.style.lineHeight = '72px';
-  }
+  // Old IDs (safe fallback — won't crash if missing)
+  setText('profileName',  name);
+  setText('profileEmail', email);
+  setVal('profileNameInput',  name);
+  setVal('profileEmailInput', email);
+  if (imgHtml) setHtml('profileAvatarEl', imgHtml);
+  else setText('profileAvatarEl', initials);
 
   // Load extra profile from Firestore
   if (fbReady) {
@@ -4064,8 +4089,8 @@ async function loadUserProfile(user) {
       const doc = await db.collection('guestProfiles').doc(user.uid).get();
       if (doc.exists) {
         const data = doc.data();
-        if (data.phone)    document.getElementById('profilePhoneInput').value    = data.phone;
-        if (data.location) document.getElementById('profileLocationInput').value = data.location;
+        if (data.phone)    { setVal('psPhone', data.phone); setVal('profilePhoneInput', data.phone); }
+        if (data.location) { setVal('psLocation', data.location); setVal('profileLocationInput', data.location); }
       }
     } catch(e) {}
   }
