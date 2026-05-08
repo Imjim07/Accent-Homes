@@ -360,6 +360,139 @@ input, textarea, select { font-family: var(--font-body); }
 .abtn-approve:hover { background:#2D6A4F;color:#fff; }
 .abtn-reject  { background:rgba(176,58,46,0.1);color:#B03A2E; }
 .abtn-reject:hover  { background:#B03A2E;color:#fff; }
+
+/* HOST CARD EDITOR */
+.host-editor-wrap {
+  display:grid; grid-template-columns:1fr 1.3fr;
+  gap:28px; align-items:start;
+}
+@media(max-width:900px){ .host-editor-wrap{grid-template-columns:1fr;} }
+
+.host-preview-col {}
+.host-form-col {}
+.host-preview-label {
+  font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--ash-lt); font-weight:600; margin-bottom:12px;
+}
+
+.host-preview-card {
+  background:var(--white); border-radius:14px;
+  border:1px solid var(--ash-faint); overflow:hidden;
+  box-shadow:0 2px 12px rgba(0,0,0,0.06); margin-bottom:16px;
+}
+.host-preview-header {
+  background:var(--charcoal); padding:12px 18px;
+}
+.host-preview-eyebrow {
+  font-size:0.6rem; letter-spacing:0.2em; text-transform:uppercase;
+  color:rgba(255,255,255,0.35); font-weight:600;
+}
+.host-preview-body { padding:18px; }
+.host-preview-top { display:flex; gap:12px; align-items:center; margin-bottom:14px; }
+.host-preview-ava-wrap { position:relative; flex-shrink:0; }
+.host-preview-ava {
+  width:56px; height:56px; border-radius:50%;
+  background:var(--ash); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; font-weight:600; overflow:hidden;
+  border:2px solid var(--ash-faint);
+}
+.host-preview-verified {
+  position:absolute; bottom:0; right:0;
+  width:18px; height:18px; border-radius:50%;
+  background:var(--charcoal); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.5rem; border:2px solid #fff;
+}
+.host-preview-name { font-size:1rem; font-weight:600; color:var(--charcoal); margin-bottom:2px; }
+.host-preview-title { font-size:0.72rem; color:var(--ash-lt); }
+.host-preview-stats { display:flex; gap:20px; margin-bottom:12px; padding:12px; background:var(--off-white,#F2F2F0); border-radius:8px; }
+.host-preview-stat { display:flex; flex-direction:column; align-items:center; }
+.host-stat-v { font-size:0.9rem; font-weight:700; color:var(--charcoal); }
+.host-stat-l { font-size:0.55rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ash-lt); margin-top:1px; }
+.host-preview-badges { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.host-badge-chip {
+  background:var(--ash-faint); color:var(--ash);
+  font-size:0.62rem; padding:3px 9px; border-radius:20px; font-weight:600;
+}
+.host-preview-resp {
+  background:var(--ash-faint); border-radius:6px;
+  padding:8px 12px; font-size:0.72rem; color:var(--ash);
+  display:flex; align-items:center; gap:6px;
+}
+.host-preview-note { font-size:0.72rem; color:var(--ash-lt); line-height:1.6; margin-bottom:16px; }
+
+.host-photo-section {
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--ash-faint); padding:18px;
+}
+.host-photo-label { font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ash-lt); font-weight:600; margin-bottom:12px; }
+.host-photo-row { display:flex; gap:14px; align-items:center; }
+.host-photo-avatar {
+  width:60px; height:60px; border-radius:50%;
+  background:var(--ash); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.1rem; font-weight:600; overflow:hidden; flex-shrink:0;
+  border:2px solid var(--ash-faint);
+}
+.host-photo-hint { font-size:0.75rem; color:var(--ash-lt); margin-bottom:8px; }
+.host-upload-btn {
+  background:var(--ash-faint); border:1px solid var(--ash-faint);
+  color:var(--ash); padding:7px 14px; border-radius:6px;
+  font-size:0.75rem; font-weight:600; cursor:pointer;
+  font-family:var(--font-body); transition:all 0.2s;
+}
+.host-upload-btn:hover { background:var(--charcoal); color:#fff; border-color:var(--charcoal); }
+
+.host-form-card {
+  background:var(--white); border-radius:12px;
+  border:1px solid var(--ash-faint); padding:24px;
+}
+.host-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+.host-full { grid-column:1/-1; }
+.host-form-badges-section { padding:16px; background:var(--ash-faint); border-radius:8px; margin-bottom:16px; }
+.host-save-row { display:flex; align-items:center; gap:14px; }
+.host-save-row .msave { flex:1; }
+
+
+/* GUESTS PANEL */
+.guests-stats {
+  display:grid; grid-template-columns:repeat(3,1fr);
+  gap:12px; margin-bottom:24px;
+}
+@media(max-width:600px){ .guests-stats{grid-template-columns:1fr;} }
+.guest-stat-card {
+  background:var(--ash-faint); border-radius:10px;
+  padding:16px; text-align:center;
+  border:1px solid var(--ash-faint);
+}
+.guest-stat-val { font-size:1.8rem; font-weight:700; color:var(--charcoal); font-family:var(--font-display); line-height:1; }
+.guest-stat-lbl { font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ash-lt); margin-top:4px; }
+
+.guest-item {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 0; border-bottom:1px solid var(--ash-faint);
+}
+.guest-item:last-child { border-bottom:none; }
+.guest-ava {
+  width:44px; height:44px; border-radius:50%;
+  background:var(--charcoal); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.9rem; font-weight:600; flex-shrink:0; overflow:hidden;
+}
+.guest-info { flex:1; min-width:0; }
+.guest-name { font-size:0.9rem; font-weight:600; color:var(--charcoal); }
+.guest-email { font-size:0.75rem; color:var(--ash-lt); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.guest-phone { font-size:0.72rem; color:var(--ash-lt); }
+.guest-meta { text-align:right; flex-shrink:0; }
+.guest-bookings-count {
+  font-size:0.72rem; font-weight:600; color:var(--ash);
+  background:var(--ash-faint); padding:3px 10px;
+  border-radius:20px; margin-bottom:4px; display:inline-block;
+}
+.guest-joined { font-size:0.65rem; color:var(--ash-lt); }
+.guest-empty { text-align:center; padding:40px 0; color:var(--ash-lt); font-style:italic; }
+
 </style>
 </head>
 <body>
@@ -403,6 +536,9 @@ input, textarea, select { font-family: var(--font-body); }
       </button>
       <button class="sidebar-link" onclick="switchPanel('inquiries', this)">
         <span class="icon">📩</span> Inquiries
+      </button>
+      <button class="sidebar-link" onclick="switchPanel('guests', this)">
+        <span class="icon">👥</span> Guests
       </button>
       <button class="sidebar-link" onclick="switchPanel('neighbourhood', this)">
         <span class="icon">📍</span> Neighbourhood
@@ -513,6 +649,41 @@ input, textarea, select { font-family: var(--font-body); }
     </div>
 
 
+
+      <!-- GUESTS PANEL -->
+      <div class="admin-panel" id="panel-guests">
+        <div class="acard">
+          <div class="acard-head">
+            <div>
+              <h3>Registered Guests</h3>
+              <p style="font-size:0.75rem;color:var(--ash-lt);margin-top:2px;">All guests who have created an account on the public site.</p>
+            </div>
+            <button class="add-btn" onclick="loadGuests()">↻ Refresh</button>
+          </div>
+
+          <!-- Stats row -->
+          <div class="guests-stats" id="guestsStats">
+            <div class="guest-stat-card">
+              <div class="guest-stat-val" id="gTotalAccounts">—</div>
+              <div class="guest-stat-lbl">Total Accounts</div>
+            </div>
+            <div class="guest-stat-card">
+              <div class="guest-stat-val" id="gTotalBookings">—</div>
+              <div class="guest-stat-lbl">Total Bookings</div>
+            </div>
+            <div class="guest-stat-card">
+              <div class="guest-stat-val" id="gThisMonth">—</div>
+              <div class="guest-stat-lbl">New This Month</div>
+            </div>
+          </div>
+
+          <!-- Guest list -->
+          <div id="guestsList">
+            <div class="empty-state">Click Refresh to load guests.</div>
+          </div>
+        </div>
+      </div>
+
       <!-- NEIGHBOURHOOD PANEL -->
       <div class="admin-panel" id="panel-neighbourhood">
         <div class="acard">
@@ -571,32 +742,116 @@ input, textarea, select { font-family: var(--font-body); }
 
       <!-- HOST CARD PANEL -->
       <div class="admin-panel" id="panel-host">
-        <div class="settings-card">
-          <h3>Host Card Settings</h3>
-          <p style="font-size:0.82rem;color:var(--ash-lt);margin-bottom:24px;">This appears in the apartment detail modal when guests click a listing.</p>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-            <div class="mfg"><label>Host / Manager Name</label><input type="text" id="hostName" placeholder="e.g. Accent Homes"></div>
-            <div class="mfg"><label>Title / Role</label><input type="text" id="hostTitle" placeholder="e.g. Property Manager · Asaba"></div>
-            <div class="mfg"><label>Rating (e.g. 4.9)</label><input type="text" id="hostRating" placeholder="4.9"></div>
-            <div class="mfg"><label>Response Rate (%)</label><input type="text" id="hostResponse" placeholder="100%"></div>
-            <div class="mfg"><label>Member Since (Year)</label><input type="text" id="hostSince" placeholder="2025"></div>
-            <div class="mfg"><label>Response Time</label><input type="text" id="hostResponseTime" placeholder="Usually responds within 1 hour"></div>
-          </div>
-          <div class="mfg" style="margin-top:8px;">
-            <label>Host Photo</label>
-            <div style="display:flex;align-items:center;gap:16px;margin-top:8px;">
-              <img id="hostAvatarPreview" src="https://ui-avatars.com/api/?name=Accent+Homes&background=2B2B2B&color=fff&size=128"
-                style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--ash-faint);">
-              <button class="add-btn" onclick="document.getElementById('hostPhotoInput').click()">Upload Photo</button>
-              <input type="file" id="hostPhotoInput" accept="image/*" style="display:none" onchange="uploadHostPhoto(this.files[0])">
+        <div class="host-editor-wrap">
+
+          <!-- LEFT — Live Preview -->
+          <div class="host-preview-col">
+            <div class="host-preview-label">Live Preview</div>
+            <div class="host-preview-card">
+              <div class="host-preview-header">
+                <span class="host-preview-eyebrow">Your Host</span>
+              </div>
+              <div class="host-preview-body">
+                <div class="host-preview-top">
+                  <div class="host-preview-ava-wrap">
+                    <div id="previewAvatar" class="host-preview-ava">AH</div>
+                    <div class="host-preview-verified">✓</div>
+                  </div>
+                  <div class="host-preview-meta">
+                    <div class="host-preview-name" id="previewName">Accent Homes</div>
+                    <div class="host-preview-title" id="previewTitle">Property Manager · Asaba</div>
+                  </div>
+                </div>
+                <div class="host-preview-stats">
+                  <div class="host-preview-stat">
+                    <span class="host-stat-v" id="previewRating">4.9★</span>
+                    <span class="host-stat-l">Rating</span>
+                  </div>
+                  <div class="host-preview-stat">
+                    <span class="host-stat-v" id="previewResponse">100%</span>
+                    <span class="host-stat-l">Response</span>
+                  </div>
+                  <div class="host-preview-stat">
+                    <span class="host-stat-v" id="previewSince">2025</span>
+                    <span class="host-stat-l">Member Since</span>
+                  </div>
+                </div>
+                <div class="host-preview-badges">
+                  <span class="host-badge-chip">✓ Identity Verified</span>
+                  <span class="host-badge-chip">🏆 Superhost</span>
+                  <span class="host-badge-chip">⚡ Fast Responder</span>
+                </div>
+                <div class="host-preview-resp">
+                  ⏱ <span id="previewResponseTime">Usually responds within 1 hour</span>
+                </div>
+              </div>
             </div>
-            <input type="hidden" id="hostPhotoUrl">
+            <p class="host-preview-note">This card appears in every apartment detail modal when guests click to view a listing.</p>
+
+            <!-- Upload photo section -->
+            <div class="host-photo-section">
+              <div class="host-photo-label">Host Photo</div>
+              <div class="host-photo-row">
+                <div id="hostAvatarPreview" class="host-photo-avatar">AH</div>
+                <div>
+                  <div class="host-photo-hint">Upload a clear headshot or logo</div>
+                  <button class="host-upload-btn" onclick="document.getElementById('hostPhotoInput').click()">📷 Upload Photo</button>
+                  <input type="file" id="hostPhotoInput" accept="image/*" style="display:none" onchange="uploadHostPhoto(this.files[0])">
+                </div>
+              </div>
+              <input type="hidden" id="hostPhotoUrl">
+            </div>
           </div>
-          <button class="msave" onclick="saveHostCard()" style="margin-top:20px;">Save Host Card</button>
-          <p id="hostSaveMsg" style="display:none;color:var(--green);font-size:0.8rem;margin-top:10px;">✅ Host card saved successfully.</p>
+
+          <!-- RIGHT — Edit Form -->
+          <div class="host-form-col">
+            <div class="host-preview-label">Edit Details</div>
+            <div class="host-form-card">
+              <div class="host-form-grid">
+                <div class="mfg host-full">
+                  <label>Host / Manager Name</label>
+                  <input type="text" id="hostName" placeholder="e.g. Accent Homes" oninput="updateHostPreview()">
+                </div>
+                <div class="mfg host-full">
+                  <label>Title / Role</label>
+                  <input type="text" id="hostTitle" placeholder="e.g. Property Manager · Asaba, Delta State" oninput="updateHostPreview()">
+                </div>
+                <div class="mfg">
+                  <label>Star Rating</label>
+                  <input type="text" id="hostRating" placeholder="4.9" oninput="updateHostPreview()">
+                </div>
+                <div class="mfg">
+                  <label>Response Rate</label>
+                  <input type="text" id="hostResponse" placeholder="100%" oninput="updateHostPreview()">
+                </div>
+                <div class="mfg">
+                  <label>Member Since</label>
+                  <input type="text" id="hostSince" placeholder="2025" oninput="updateHostPreview()">
+                </div>
+                <div class="mfg">
+                  <label>Response Time</label>
+                  <input type="text" id="hostResponseTime" placeholder="Usually responds within 1 hour" oninput="updateHostPreview()">
+                </div>
+              </div>
+
+              <div class="host-form-badges-section">
+                <div style="font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--ash-lt);font-weight:600;margin-bottom:10px;">Badges shown on card</div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                  <span class="host-badge-chip">✓ Identity Verified</span>
+                  <span class="host-badge-chip">🏆 Superhost</span>
+                  <span class="host-badge-chip">⚡ Fast Responder</span>
+                </div>
+                <p style="font-size:0.72rem;color:var(--ash-lt);margin-top:8px;">Badges are fixed. Contact developer to customise.</p>
+              </div>
+
+              <div class="host-save-row">
+                <button class="msave" onclick="saveHostCard()">Save Host Card</button>
+                <div id="hostSaveMsg" style="display:none;font-size:0.78rem;color:var(--green);font-weight:500;">✅ Saved successfully</div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-
     <!-- SETTINGS -->
     <div class="admin-panel" id="panel-settings">
       <div class="settings-card">
@@ -735,8 +990,8 @@ const DEMO_EMAIL    = "admin@accenthomes.com";
 const DEMO_PASSWORD = "LekkiHaven43211$";
 
 // CLOUDINARY — Free image hosting (cloudinary.com)
-const CLOUDINARY_CLOUD = "dnow7c0gm";
-const CLOUDINARY_PRESET = "a4gowqzh";
+const CLOUDINARY_CLOUD = "df5uashml";
+const CLOUDINARY_PRESET = "accent-homes";
 
 let db = null, auth = null, firebaseReady = false;
 
@@ -829,9 +1084,11 @@ function switchPanel(name, btn) {
   document.querySelectorAll(".sidebar-link").forEach(l=>l.classList.remove("active"));
   const panelEl = document.getElementById("panel-"+name); if(panelEl) panelEl.classList.add("active");
   btn.classList.add("active");
+  if (name === "guests") loadGuests();
   const titles = {
     dashboard:     ["Dashboard",     "Overview of your properties"],
     listings:      ["Listings",      "Manage your apartments"],
+    guests:        ["Guests",        "Registered guest accounts"],
     neighbourhood: ["Neighbourhood", "Manage nearby places"],
     testimonials:  ["Testimonials",  "Manage guest reviews"],
     gallery:       ["Gallery",       "Manage public site gallery photos"],
@@ -1462,17 +1719,26 @@ async function loadHostCard() {
   if (data.since)        document.getElementById('hostSince').value        = data.since;
   if (data.responseTime) document.getElementById('hostResponseTime').value = data.responseTime;
   if (data.photo) {
-    document.getElementById('hostPhotoUrl').value       = data.photo;
-    document.getElementById('hostAvatarPreview').src    = data.photo;
+    document.getElementById('hostPhotoUrl').value = data.photo;
+    const imgHtml = `<img src="${data.photo}" style="width:100%;height:100%;object-fit:cover;">`;
+    const hav = document.getElementById('hostAvatarPreview');
+    const pav = document.getElementById('previewAvatar');
+    if(hav) hav.innerHTML = imgHtml;
+    if(pav) pav.innerHTML = imgHtml;
   }
+  updateHostPreview();
 }
 
 async function uploadHostPhoto(file) {
   if (!file) return;
   try {
     const url = await cloudinaryUpload(file);
-    document.getElementById('hostPhotoUrl').value    = url;
-    document.getElementById('hostAvatarPreview').src = url;
+    document.getElementById('hostPhotoUrl').value = url;
+    const imgHtml = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+    const hav = document.getElementById('hostAvatarPreview');
+    const pav = document.getElementById('previewAvatar');
+    if(hav) hav.innerHTML = imgHtml;
+    if(pav) pav.innerHTML = imgHtml;
   } catch(e) { alert('Photo upload failed: ' + e.message); }
 }
 
@@ -1512,6 +1778,111 @@ async function updateBookingStatus(id, status) {
     localStorage.setItem("ah_bookings", JSON.stringify(list));
   }
   loadAll();
+}
+
+
+function updateHostPreview() {
+  const name  = document.getElementById('hostName').value || 'Accent Homes';
+  const title = document.getElementById('hostTitle').value || 'Property Manager · Asaba';
+  const rating = document.getElementById('hostRating').value || '4.9★';
+  const response = document.getElementById('hostResponse').value || '100%';
+  const since = document.getElementById('hostSince').value || '2025';
+  const rt = document.getElementById('hostResponseTime').value || 'Usually responds within 1 hour';
+
+  const el = (id) => document.getElementById(id);
+  if(el('previewName'))         el('previewName').textContent  = name;
+  if(el('previewTitle'))        el('previewTitle').textContent = title;
+  if(el('previewRating'))       el('previewRating').textContent = rating.includes('★') ? rating : rating + '★';
+  if(el('previewResponse'))     el('previewResponse').textContent = response;
+  if(el('previewSince'))        el('previewSince').textContent = since;
+  if(el('previewResponseTime')) el('previewResponseTime').textContent = rt;
+
+  // Update avatar initials
+  const initials = name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const av = el('previewAvatar');
+  const hav = el('hostAvatarPreview');
+  const photoUrl = el('hostPhotoUrl') ? el('hostPhotoUrl').value : '';
+  if (!photoUrl) {
+    if(av)  av.textContent  = initials;
+    if(hav) hav.textContent = initials;
+  }
+}
+
+
+// ============================================================
+// GUESTS PANEL
+// ============================================================
+async function loadGuests() {
+  const listEl  = document.getElementById('guestsList');
+  listEl.innerHTML = '<div class="empty-state">Loading guests…</div>';
+
+  let profiles  = [];
+  let bookings  = [];
+
+  try {
+    if (fbReady) {
+      // Load guest profiles
+      const snap = await db.collection('guestProfiles').orderBy('createdAt','desc').get();
+      profiles   = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+
+      // Load all bookings to count per guest
+      const bSnap = await db.collection('bookings').get();
+      bookings    = bSnap.docs.map(d => ({ id:d.id, ...d.data() }));
+    } else {
+      profiles = JSON.parse(localStorage.getItem('ah_guestProfiles') || '[]');
+      bookings = JSON.parse(localStorage.getItem('ah_bookings') || '[]');
+    }
+  } catch(e) {
+    listEl.innerHTML = '<div class="empty-state">Could not load guests. Check Firebase connection.</div>';
+    return;
+  }
+
+  // Update stats
+  const now       = new Date();
+  const thisMonth = profiles.filter(p => {
+    if (!p.createdAt) return false;
+    const d = p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt);
+    return d.getMonth()===now.getMonth() && d.getFullYear()===now.getFullYear();
+  }).length;
+
+  const totalEl = document.getElementById('gTotalAccounts');
+  const bTotEl  = document.getElementById('gTotalBookings');
+  const mTotEl  = document.getElementById('gThisMonth');
+  if(totalEl) totalEl.textContent = profiles.length;
+  if(bTotEl)  bTotEl.textContent  = bookings.length;
+  if(mTotEl)  mTotEl.textContent  = thisMonth;
+
+  if (!profiles.length) {
+    listEl.innerHTML = '<div class="guest-empty">No registered guests yet. Guests who create accounts on the public site will appear here.</div>';
+    return;
+  }
+
+  // Build guest list
+  listEl.innerHTML = profiles.map(p => {
+    const guestBookings = bookings.filter(b => b.email === p.email || b.guestUid === p.id);
+    const initials = (p.name||p.email||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    const joined = p.createdAt
+      ? (p.createdAt.toDate ? p.createdAt.toDate() : new Date(p.createdAt)).toLocaleDateString('en-NG',{day:'numeric',month:'short',year:'numeric'})
+      : '—';
+
+    return `
+    <div class="guest-item">
+      <div class="guest-ava">
+        ${p.photoURL
+          ? `<img src="${p.photoURL}" style="width:100%;height:100%;object-fit:cover;">`
+          : initials}
+      </div>
+      <div class="guest-info">
+        <div class="guest-name">${p.name||'—'}</div>
+        <div class="guest-email">${p.email||'—'}</div>
+        <div class="guest-phone">${p.phone||''}</div>
+      </div>
+      <div class="guest-meta">
+        <div class="guest-bookings-count">${guestBookings.length} booking${guestBookings.length!==1?'s':''}</div>
+        <div class="guest-joined">Joined ${joined}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ── INIT ──
