@@ -1070,19 +1070,63 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   background: var(--ash-faint); color: var(--ash-lt);
   display: flex; align-items: center; justify-content: center;
   font-size: 0.72rem; font-weight: 700; flex-shrink: 0;
-  transition: all 0.3s;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
 }
-.pay-step.active .pay-step-num { background: var(--charcoal); color: #fff; }
-.pay-step.done   .pay-step-num { background: var(--green); color: #fff; }
+.pay-step { transition: color 0.3s ease; }
+.pay-step.active .pay-step-num {
+  background: var(--charcoal); color: #fff;
+  transform: scale(1.12);
+  box-shadow: 0 2px 12px rgba(43,43,43,0.25);
+}
+.pay-step.done .pay-step-num {
+  background: var(--green); color: #fff;
+  transform: scale(1);
+}
 .pay-step-line {
   flex: 1; height: 1.5px; background: var(--ash-faint);
-  margin: 0 8px; transition: background 0.3s;
+  margin: 0 8px;
+  transition: background 0.5s cubic-bezier(0.4,0,0.2,1);
+  position: relative; overflow: hidden;
 }
-.pay-step-line.done { background: var(--green); }
+.pay-step-line::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: var(--green);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+.pay-step-line.done::after { transform: scaleX(1); }
 
 /* Step panels */
-.pay-step-panel { display: none; }
-.pay-step-panel.active { display: block; }
+.pay-step-panel {
+  display: none;
+  opacity: 0;
+  transform: translateX(20px);
+  transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1), transform 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.pay-step-panel.active {
+  display: block;
+  animation: stepSlideIn 0.35s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+.pay-step-panel.slide-out {
+  animation: stepSlideOut 0.25s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes stepSlideIn {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes stepSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-24px); }
+}
+@keyframes stepSlideOutRight {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(24px); }
+}
+@keyframes stepSlideInRight {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
 
 /* ID Upload zone */
 .id-upload-zone {
@@ -1122,6 +1166,11 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
 .booking-summary {
   background: var(--ash-faint); border-radius: var(--radius);
   padding: 18px; margin-bottom: 20px;
+  animation: summaryFadeIn 0.4s ease forwards;
+}
+@keyframes summaryFadeIn {
+  from { opacity:0; transform:translateY(8px); }
+  to   { opacity:1; transform:translateY(0); }
 }
 .bs-row {
   display: flex; justify-content: space-between;
@@ -1213,10 +1262,249 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   cursor: pointer; font-size: 1.1rem;
 }
 
+
+/* ============================================================
+   GUEST AUTH & PROFILE PORTAL
+   ============================================================ */
+
+/* Auth Modal */
+.auth-overlay {
+  display:none; position:fixed; inset:0; z-index:4500;
+  background:rgba(0,0,0,0.6); align-items:center; justify-content:center;
+  padding:24px; backdrop-filter:blur(4px);
+}
+.auth-overlay.open { display:flex; animation:overlayFadeIn 0.3s ease forwards; }
+.auth-modal {
+  background:var(--white); border-radius:var(--radius-lg);
+  width:100%; max-width:420px;
+  box-shadow:var(--shadow-lg);
+  animation:modalSlideUp 0.38s cubic-bezier(0.4,0,0.2,1) forwards;
+  overflow:hidden;
+}
+.auth-head {
+  background:var(--charcoal); padding:24px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.auth-head h3 { color:var(--white); font-family:var(--font-display); font-size:1.3rem; font-weight:400; }
+.auth-close { background:none; border:none; color:rgba(255,255,255,0.5); font-size:1.2rem; cursor:pointer; transition:color var(--transition); }
+.auth-close:hover { color:var(--white); }
+.auth-tabs { display:flex; border-bottom:1px solid var(--ash-faint); }
+.auth-tab {
+  flex:1; padding:14px; text-align:center;
+  font-size:0.78rem; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; cursor:pointer; color:var(--ash-lt);
+  border-bottom:2px solid transparent; transition:all var(--transition);
+  background:none; border-left:none; border-right:none; border-top:none;
+  font-family:var(--font-body);
+}
+.auth-tab.active { color:var(--charcoal); border-bottom-color:var(--charcoal); }
+.auth-body { padding:28px; }
+.auth-fg { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.auth-fg label { font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ash); font-weight:600; }
+.auth-fg input {
+  border:1.5px solid var(--ash-faint); border-radius:var(--radius);
+  padding:12px 14px; font-size:0.9rem; outline:none;
+  transition:all var(--transition); color:var(--charcoal);
+  font-family:var(--font-body);
+}
+.auth-fg input:focus { border-color:var(--ash); box-shadow:0 0 0 3px rgba(43,43,43,0.08); }
+.auth-btn {
+  width:100%; background:var(--charcoal); color:var(--white);
+  padding:14px; border-radius:var(--radius);
+  font-size:0.8rem; letter-spacing:0.1em; text-transform:uppercase;
+  font-weight:700; border:none; cursor:pointer;
+  transition:all var(--transition); font-family:var(--font-body);
+  margin-top:4px;
+}
+.auth-btn:hover { background:var(--ash); }
+.auth-err { color:var(--red); font-size:0.78rem; margin-top:8px; display:none; text-align:center; }
+.auth-success { color:var(--green); font-size:0.78rem; margin-top:8px; display:none; text-align:center; }
+.forgot-link {
+  display:block; text-align:center; margin-top:12px;
+  font-size:0.75rem; color:var(--ash-lt); cursor:pointer;
+  transition:color var(--transition);
+}
+.forgot-link:hover { color:var(--charcoal); }
+
+/* Nav Auth Buttons */
+.nav-auth-btns { display:flex; align-items:center; gap:10px; }
+.nav-signin-btn {
+  background:none; border:1.5px solid rgba(247,245,242,0.35);
+  color:rgba(247,245,242,0.8); padding:8px 18px;
+  border-radius:var(--radius); font-size:0.75rem;
+  font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+  cursor:pointer; transition:all var(--transition); font-family:var(--font-body);
+}
+.nav-signin-btn:hover { border-color:rgba(247,245,242,0.7); color:var(--white); }
+
+/* Guest Avatar in Nav */
+.nav-guest-btn {
+  display:none; align-items:center; gap:8px;
+  background:none; border:none; cursor:pointer;
+  position:relative; padding:0;
+}
+.nav-guest-avatar {
+  width:36px; height:36px; border-radius:50%;
+  object-fit:cover; border:2px solid rgba(247,245,242,0.3);
+  transition:border-color var(--transition);
+  background:var(--ash); display:flex; align-items:center;
+  justify-content:center; font-size:0.85rem; font-weight:600;
+  color:var(--white);
+}
+.nav-guest-btn:hover .nav-guest-avatar { border-color:rgba(247,245,242,0.8); }
+.nav-guest-name { font-size:0.75rem; color:rgba(247,245,242,0.8); font-weight:500; max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+/* Profile Sidebar */
+.profile-sidebar {
+  position:fixed; top:0; right:0; bottom:0; z-index:4500;
+  width:100%; max-width:420px;
+  background:var(--white); box-shadow:-8px 0 40px rgba(0,0,0,0.15);
+  display:flex; flex-direction:column;
+  transform:translateX(100%);
+  transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  overflow:hidden;
+}
+.profile-sidebar.open { transform:translateX(0); }
+.profile-backdrop {
+  display:none; position:fixed; inset:0; z-index:4400;
+  background:rgba(0,0,0,0.5); backdrop-filter:blur(4px);
+  transition:opacity 0.3s;
+}
+.profile-backdrop.open { display:block; animation:overlayFadeIn 0.3s ease forwards; }
+.profile-head {
+  background:var(--charcoal); padding:24px;
+  display:flex; align-items:center; justify-content:space-between;
+  flex-shrink:0;
+}
+.profile-head h3 { color:var(--white); font-family:var(--font-display); font-size:1.2rem; font-weight:400; }
+.profile-close { background:none; border:none; color:rgba(255,255,255,0.5); font-size:1.2rem; cursor:pointer; }
+.profile-body { flex:1; overflow-y:auto; padding:0; }
+
+/* Profile Avatar Section */
+.profile-avatar-section {
+  background:var(--ash-faint); padding:28px 24px;
+  display:flex; align-items:center; gap:18px;
+  border-bottom:1px solid var(--ash-faint);
+}
+.profile-avatar-wrap { position:relative; flex-shrink:0; }
+.profile-avatar {
+  width:72px; height:72px; border-radius:50%;
+  object-fit:cover; border:3px solid var(--white);
+  box-shadow:var(--shadow-sm); background:var(--ash);
+  display:flex; align-items:center; justify-content:center;
+  font-size:1.4rem; font-weight:600; color:var(--white);
+}
+.profile-avatar-edit {
+  position:absolute; bottom:0; right:0;
+  width:24px; height:24px; border-radius:50%;
+  background:var(--charcoal); color:var(--white);
+  border:2px solid var(--white); display:flex;
+  align-items:center; justify-content:center;
+  font-size:0.65rem; cursor:pointer; transition:all var(--transition);
+}
+.profile-avatar-edit:hover { background:var(--ash); transform:scale(1.1); }
+.profile-info-brief { flex:1; }
+.profile-info-name { font-family:var(--font-display); font-size:1.2rem; color:var(--charcoal); font-weight:400; }
+.profile-info-email { font-size:0.78rem; color:var(--ash-lt); margin-top:2px; }
+.profile-info-badge {
+  display:inline-flex; align-items:center; gap:4px;
+  background:rgba(45,106,79,0.1); color:var(--green);
+  font-size:0.65rem; padding:3px 9px; border-radius:20px;
+  font-weight:600; margin-top:6px;
+}
+
+/* Profile Tabs */
+.profile-tabs { display:flex; border-bottom:1px solid var(--ash-faint); }
+.profile-tab {
+  flex:1; padding:14px 8px; text-align:center;
+  font-size:0.72rem; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; cursor:pointer; color:var(--ash-lt);
+  border-bottom:2px solid transparent; transition:all var(--transition);
+  background:none; border-left:none; border-right:none; border-top:none;
+  font-family:var(--font-body);
+}
+.profile-tab.active { color:var(--charcoal); border-bottom-color:var(--charcoal); }
+.profile-panel { display:none; padding:24px; }
+.profile-panel.active { display:block; }
+
+/* Profile Form */
+.profile-fg { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+.profile-fg label { font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ash); font-weight:600; }
+.profile-fg input {
+  border:1.5px solid var(--ash-faint); border-radius:var(--radius);
+  padding:11px 14px; font-size:0.875rem; outline:none;
+  transition:all var(--transition); color:var(--charcoal); font-family:var(--font-body);
+}
+.profile-fg input:focus { border-color:var(--ash); box-shadow:0 0 0 3px rgba(43,43,43,0.08); }
+.profile-save-btn {
+  width:100%; background:var(--charcoal); color:var(--white);
+  padding:13px; border-radius:var(--radius); border:none; cursor:pointer;
+  font-size:0.78rem; font-weight:700; letter-spacing:0.08em;
+  text-transform:uppercase; font-family:var(--font-body);
+  transition:background var(--transition); margin-top:8px;
+}
+.profile-save-btn:hover { background:var(--ash); }
+.profile-save-msg { font-size:0.78rem; text-align:center; margin-top:8px; display:none; }
+
+/* Booking History */
+.booking-history-item {
+  background:var(--ash-faint); border-radius:var(--radius-lg);
+  padding:16px; margin-bottom:12px; border:1px solid var(--ash-faint);
+  transition:all var(--transition);
+}
+.booking-history-item:hover { border-color:rgba(61,61,61,0.2); }
+.bh-ref { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ash-lt); margin-bottom:4px; }
+.bh-apt { font-family:var(--font-display); font-size:1rem; color:var(--charcoal); margin-bottom:6px; font-weight:400; }
+.bh-dates { font-size:0.78rem; color:var(--ash-lt); margin-bottom:8px; }
+.bh-footer { display:flex; align-items:center; justify-content:space-between; }
+.bh-amount { font-family:var(--font-display); font-size:1.1rem; color:var(--charcoal); }
+.bh-status {
+  font-size:0.65rem; font-weight:700; letter-spacing:0.08em;
+  text-transform:uppercase; padding:3px 10px; border-radius:20px;
+}
+.bh-confirmed { background:rgba(45,106,79,0.1); color:var(--green); }
+.bh-pending   { background:rgba(201,169,110,0.15); color:#8B6914; }
+.bh-empty { text-align:center; padding:32px 0; color:var(--ash-lt); font-style:italic; font-size:0.875rem; }
+
+/* Sign out */
+.profile-signout {
+  width:100%; background:none; border:1.5px solid var(--ash-faint);
+  color:var(--ash-lt); padding:12px; border-radius:var(--radius);
+  font-size:0.78rem; font-weight:600; cursor:pointer;
+  transition:all var(--transition); font-family:var(--font-body);
+  margin-top:8px; letter-spacing:0.06em; text-transform:uppercase;
+}
+.profile-signout:hover { border-color:var(--red); color:var(--red); }
+
+@media(max-width:600px) {
+  .profile-sidebar { max-width:100%; }
+  .nav-guest-name { display:none; }
+}
+
 /* PAYMENT MODAL */
-.pay-overlay { display:none; position:fixed; inset:0; z-index:4000; background:rgba(0,0,0,0.6); align-items:center; justify-content:center; padding:24px; }
-.pay-overlay.open { display:flex; }
-.pay-modal { background:var(--white); border-radius:var(--radius-lg); width:100%; max-width:520px; box-shadow:var(--shadow-lg); overflow:hidden; max-height:90vh; overflow-y:auto; }
+.pay-overlay {
+  display:none; position:fixed; inset:0; z-index:4000;
+  background:rgba(0,0,0,0); align-items:center; justify-content:center; padding:24px;
+  transition: background 0.3s ease;
+}
+.pay-overlay.open {
+  display:flex;
+  animation: overlayFadeIn 0.3s ease forwards;
+}
+@keyframes overlayFadeIn {
+  from { background: rgba(0,0,0,0); }
+  to   { background: rgba(0,0,0,0.6); }
+}
+.pay-modal {
+  background:var(--white); border-radius:var(--radius-lg); width:100%;
+  max-width:580px; box-shadow:var(--shadow-lg); overflow:hidden;
+  max-height:90vh; overflow-y:auto;
+  animation: modalSlideUp 0.38s cubic-bezier(0.4,0,0.2,1) forwards;
+}
+@keyframes modalSlideUp {
+  from { opacity:0; transform:translateY(32px) scale(0.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
 .pay-head { background:#2B2B2B; padding:24px 28px; display:flex; align-items:center; justify-content:space-between; }
 .pay-head h3 { color:var(--white); font-family:var(--font-display); font-size:1.3rem; font-weight:400; }
 .pay-close { background:none; border:none; color:rgba(255,255,255,0.4); font-size:1.2rem; cursor:pointer; }
@@ -1264,9 +1552,336 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   .hero-actions { flex-direction:column; align-items:center; }
   .strip-track { animation-duration:12s; }
 }
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+#loginPage {
+  position:fixed; inset:0; z-index:9000;
+  display:flex; background:var(--white);
+  transition:opacity 0.5s cubic-bezier(0.4,0,0.2,1),
+             transform 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+#loginPage.hiding {
+  opacity:0; transform:translateY(-24px); pointer-events:none;
+}
+#loginPage.gone { display:none; }
+
+/* Left image panel */
+.ll {
+  flex:1; position:relative; overflow:hidden; display:none;
+}
+@media(min-width:768px){ .ll { display:block; } }
+.ll-img {
+  position:absolute; inset:0;
+  background:url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200') center/cover;
+}
+.ll-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(160deg,rgba(43,43,43,0.8) 0%,rgba(43,43,43,0.3) 100%);
+  display:flex; flex-direction:column;
+  justify-content:space-between; padding:44px;
+}
+.ll-brand {
+  font-family:var(--font-display); font-size:1.8rem;
+  font-weight:400; color:#fff; letter-spacing:0.02em;
+}
+.ll-brand em { font-style:italic; color:rgba(255,255,255,0.45); font-size:1.4rem; }
+.ll-quote {
+  font-family:var(--font-display); font-size:2.8rem;
+  font-weight:300; color:#fff; line-height:1.15;
+}
+.ll-quote em { font-style:italic; color:var(--bronze); }
+.ll-badge {
+  display:inline-flex; align-items:center; gap:8px; margin-top:16px;
+  background:rgba(255,255,255,0.12); backdrop-filter:blur(8px);
+  padding:10px 18px; border-radius:40px; border:1px solid rgba(255,255,255,0.2);
+}
+.ll-badge-dot { width:8px; height:8px; border-radius:50%; background:#4ade80; flex-shrink:0; }
+.ll-badge-text { font-size:0.78rem; color:rgba(255,255,255,0.8); }
+
+/* Right form panel */
+.lr {
+  width:100%; max-width:460px;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:56px 44px; overflow-y:auto;
+}
+@media(max-width:767px){ .lr { max-width:100%; padding:44px 24px; } }
+
+.lr-logo {
+  font-family:var(--font-display); font-size:1.5rem;
+  font-weight:500; color:var(--charcoal); margin-bottom:32px;
+  display:block;
+}
+@media(min-width:768px){ .lr-logo { display:none; } }
+
+.lr-heading {
+  font-family:var(--font-display); font-size:2.2rem;
+  font-weight:400; color:var(--charcoal); margin-bottom:6px; line-height:1.15;
+}
+.lr-sub {
+  font-size:0.875rem; color:var(--ash-lt);
+  margin-bottom:36px; font-weight:300; line-height:1.6;
+}
+
+/* Tabs */
+.l-tabs {
+  display:flex; background:var(--ash-faint);
+  border-radius:var(--radius); padding:4px; margin-bottom:28px;
+}
+.l-tab {
+  flex:1; padding:10px; border:none; background:transparent;
+  border-radius:8px; font-size:0.8rem; font-weight:600;
+  color:var(--ash-lt); cursor:pointer; font-family:var(--font-body);
+  transition:all 0.2s var(--ease);
+}
+.l-tab.active {
+  background:var(--white); color:var(--charcoal);
+  box-shadow:0 1px 4px rgba(0,0,0,0.08);
+}
+
+.l-panel { display:none; }
+.l-panel.active { display:block; animation:fadeUp 0.3s var(--ease); }
+
+/* Form fields */
+.l-fg { margin-bottom:14px; }
+.l-fg label {
+  display:block; font-size:0.68rem; font-weight:700;
+  letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--ash); margin-bottom:6px;
+}
+.l-fg input {
+  width:100%; padding:13px 16px;
+  border:1.5px solid var(--ash-faint);
+  border-radius:var(--radius); font-size:0.9rem;
+  color:var(--charcoal); background:var(--white);
+  font-family:var(--font-body);
+  transition:border-color 0.2s, box-shadow 0.2s;
+}
+.l-fg input:focus {
+  border-color:var(--ash);
+  box-shadow:0 0 0 3px rgba(74,74,74,0.1);
+  outline:none;
+}
+.l-btn {
+  width:100%; padding:14px; background:var(--charcoal);
+  color:#fff; border:none; border-radius:var(--radius);
+  font-size:0.85rem; font-weight:600; letter-spacing:0.06em;
+  text-transform:uppercase; cursor:pointer;
+  font-family:var(--font-body);
+  transition:background 0.2s, transform 0.2s;
+  margin-top:4px;
+}
+.l-btn:hover { background:var(--ash); transform:translateY(-1px); }
+.l-btn:active { transform:translateY(0); }
+
+.l-div {
+  display:flex; align-items:center; gap:12px;
+  margin:20px 0; color:var(--ash-lt); font-size:0.78rem;
+}
+.l-div::before,.l-div::after { content:''; flex:1; height:1px; background:var(--ash-faint); }
+
+.l-guest {
+  width:100%; padding:13px; background:transparent;
+  border:1.5px solid var(--ash-faint); border-radius:var(--radius);
+  font-size:0.85rem; font-weight:500; color:var(--ash);
+  font-family:var(--font-body); cursor:pointer;
+  transition:all 0.2s;
+}
+.l-guest:hover { border-color:var(--ash); background:var(--ash-faint); }
+
+.l-err { color:var(--red); font-size:0.78rem; margin-top:8px; display:none; text-align:center; }
+.l-suc { color:var(--green); font-size:0.78rem; margin-top:8px; display:none; text-align:center; }
+.l-forgot {
+  display:block; text-align:center; margin-top:12px;
+  font-size:0.78rem; color:var(--ash-lt); cursor:pointer;
+  transition:color 0.2s;
+}
+.l-forgot:hover { color:var(--charcoal); }
+.l-terms { font-size:0.72rem; color:var(--ash-lt); text-align:center; margin-top:24px; line-height:1.7; }
+
+/* ============================================================
+   CATEGORY PILLS
+   ============================================================ */
+#categories {
+  background:var(--white); border-bottom:1px solid var(--ash-faint);
+  position:sticky; top:72px; z-index:900;
+}
+.cat-scroll {
+  display:flex; overflow-x:auto; padding:0 24px;
+  max-width:1280px; margin:0 auto; scrollbar-width:none;
+}
+.cat-scroll::-webkit-scrollbar { display:none; }
+.cat-pill {
+  display:flex; flex-direction:column; align-items:center; gap:5px;
+  padding:13px 20px; border:none; border-bottom:2.5px solid transparent;
+  background:transparent; color:var(--ash-lt); font-size:0.65rem;
+  font-weight:600; letter-spacing:0.07em; text-transform:uppercase;
+  white-space:nowrap; cursor:pointer; font-family:var(--font-body);
+  transition:all 0.2s;
+}
+.cat-pill:hover { color:var(--ash); }
+.cat-pill.active { color:var(--charcoal); border-bottom-color:var(--charcoal); }
+.cat-icon { font-size:1.2rem; }
+
+/* ============================================================
+   AIRBNB-STYLE CARDS
+   ============================================================ */
+.listing-card {
+  cursor:pointer; background:none !important;
+  border:none !important; border-radius:0 !important;
+  box-shadow:none !important; overflow:visible !important;
+  transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.listing-card:hover { transform:translateY(-3px); }
+
+.card-img-wrap {
+  position:relative; border-radius:var(--radius-lg);
+  overflow:hidden; aspect-ratio:4/3;
+  background:var(--ash-faint); margin-bottom:10px;
+}
+.card-heart {
+  position:absolute; top:12px; right:12px; z-index:3;
+  width:32px; height:32px; border-radius:50%;
+  background:rgba(255,255,255,0.82); border:none;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.95rem; cursor:pointer;
+  transition:all 0.2s; backdrop-filter:blur(8px);
+}
+.card-heart:hover { background:#fff; transform:scale(1.1); }
+.card-heart.liked { color:#E31C5F; }
+
+.card-body { padding:0 !important; }
+.card-loc { font-size:0.72rem; color:var(--ash-lt); margin-bottom:3px; }
+.card-name {
+  font-family:var(--font-display); font-size:1.05rem;
+  font-weight:400; color:var(--charcoal); margin-bottom:3px; line-height:1.2;
+}
+.card-amen { font-size:0.72rem; color:var(--ash-lt); margin-bottom:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.card-price-row { display:flex; align-items:baseline; gap:4px; }
+.card-price { font-family:var(--font-display); font-size:1rem; font-weight:500; color:var(--charcoal); }
+.card-price-u { font-size:0.72rem; color:var(--ash-lt); }
+
+/* ============================================================
+   MOBILE BOTTOM NAV
+   ============================================================ */
+.mob-nav {
+  display:none; position:fixed; bottom:0; left:0; right:0; z-index:800;
+  background:rgba(248,248,248,0.97); backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px); border-top:1px solid var(--ash-faint);
+  padding:8px 0 max(8px, env(safe-area-inset-bottom));
+}
+@media(max-width:767px) { .mob-nav { display:flex; } }
+.mob-item {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+  padding:6px 0; background:none; border:none; cursor:pointer;
+  color:var(--ash-lt); font-size:0.56rem; font-weight:600;
+  letter-spacing:0.07em; text-transform:uppercase;
+  font-family:var(--font-body); transition:color 0.2s;
+}
+.mob-item.active { color:var(--charcoal); }
+.mob-icon { font-size:1.2rem; }
+
+/* Nav Airbnb style */
+.nav-inner-ab {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px; padding:0 24px; height:72px;
+  max-width:1280px; margin:0 auto;
+}
+.nav-logo-ab {
+  font-family:var(--font-display); font-size:1.4rem; font-weight:500;
+  color:var(--charcoal); cursor:pointer; flex-shrink:0; white-space:nowrap;
+}
+.nav-search-ab {
+  flex:1; max-width:380px;
+  display:flex; align-items:center;
+  background:var(--white); border:1.5px solid var(--ash-faint);
+  border-radius:40px; padding:0 14px; height:44px; gap:10px;
+  transition:all 0.2s; cursor:pointer;
+}
+.nav-search-ab:hover { border-color:rgba(74,74,74,0.4); box-shadow:var(--shadow-sm); }
+.nav-s-text { font-size:0.8rem; color:var(--ash-lt); flex:1; }
+.nav-s-btn {
+  width:28px; height:28px; background:var(--charcoal); border:none;
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  color:#fff; font-size:0.7rem; flex-shrink:0;
+}
+.nav-profile-ab {
+  display:flex; align-items:center; gap:8px;
+  padding:6px 6px 6px 14px;
+  background:var(--white); border:1.5px solid var(--ash-faint);
+  border-radius:40px; cursor:pointer; transition:box-shadow 0.2s;
+  flex-shrink:0;
+}
+.nav-profile-ab:hover { box-shadow:var(--shadow); }
+.nav-avatar-ab {
+  width:32px; height:32px; border-radius:50%;
+  background:var(--charcoal); color:#fff;
+  display:flex; align-items:center; justify-content:center;
+  font-size:0.78rem; font-weight:600; overflow:hidden; flex-shrink:0;
+}
+@media(max-width:767px) {
+  .nav-search-ab { display:none; }
+  #apartments { padding-bottom:90px; }
+}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
 </style>
 </head>
 <body>
+
+<!-- ══════════════════ LOGIN PAGE ══════════════════ -->
+<div id="loginPage">
+  <!-- Left image -->
+  <div class="ll">
+    <div class="ll-img"></div>
+    <div class="ll-overlay">
+      <div class="ll-brand">Accent Homes <em>· Asaba</em></div>
+      <div>
+        <div class="ll-quote">Life, with the<br><em>Right Accent.</em></div>
+        <div class="ll-badge">
+          <div class="ll-badge-dot"></div>
+          <span class="ll-badge-text">4 luxury residences available in Asaba</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Right form -->
+  <div class="lr">
+    <span class="lr-logo">Accent Homes</span>
+    <h1 class="lr-heading">Welcome.</h1>
+    <p class="lr-sub">Sign in to explore Asaba's finest short-let residences.</p>
+    <div class="l-tabs">
+      <button class="l-tab active" id="ltSign" onclick="switchLTab('signin')">Sign In</button>
+      <button class="l-tab" id="ltReg" onclick="switchLTab('register')">Register</button>
+    </div>
+    <!-- Sign In -->
+    <div class="l-panel active" id="lpSignin">
+      <div class="l-fg"><label>Email</label><input type="email" id="liEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLSignIn()"></div>
+      <div class="l-fg"><label>Password</label><input type="password" id="liPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLSignIn()"></div>
+      <button class="l-btn" onclick="doLSignIn()">Sign In →</button>
+      <p class="l-err" id="liErr"></p>
+      <span class="l-forgot" onclick="doLForgot()">Forgot your password?</span>
+      <p class="l-suc" id="liReset">Reset email sent — check your inbox.</p>
+      <div class="l-div">or</div>
+      <button class="l-guest" onclick="continueAsGuest()">Continue as Guest →</button>
+    </div>
+    <!-- Register -->
+    <div class="l-panel" id="lpReg">
+      <div class="l-fg"><label>Full Name</label><input type="text" id="regName" placeholder="Your full name"></div>
+      <div class="l-fg"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div>
+      <div class="l-fg"><label>Phone / WhatsApp</label><input type="tel" id="regPhone" placeholder="+234..."></div>
+      <div class="l-fg"><label>Password</label><input type="password" id="regPass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')doLRegister()"></div>
+      <button class="l-btn" onclick="doLRegister()">Create Account →</button>
+      <p class="l-err" id="regErr"></p>
+      <p class="l-suc" id="regSuc">Account created! Signing you in…</p>
+      <div class="l-div">or</div>
+      <button class="l-guest" onclick="continueAsGuest()">Continue as Guest →</button>
+    </div>
+    <p class="l-terms">By continuing you agree to Accent Homes' terms of service and privacy policy.</p>
+  </div>
+</div>
+
 
 <div id="scroll-progress"></div>
 
@@ -1324,7 +1939,7 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   <div class="hero-content">
     <div class="hero-eyebrow">Asaba, Delta State — Nigeria</div>
     <h1 class="hero-title">
-      Life, with the Right<br><em>Accent</em><br>
+      Asaba's Finest<br><em>Address</em><br>Is Yours
     </h1>
     <p class="hero-sub">Experience the pinnacle of luxury living in Asaba. Meticulously appointed residences where every detail speaks of refinement and every stay feels like an event.</p>
     <div class="hero-actions">
@@ -1372,6 +1987,20 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
     <div class="strip-item">💳 Paystack <span>Secure Payments</span></div>
     <div class="strip-item">🚗 Secure Parking</div>
     <div class="strip-item">🌆 Lagos <span>Coming Soon</span></div>
+  </div>
+</div>
+
+
+<!-- CATEGORY PILLS -->
+<div id="categories">
+  <div class="cat-scroll">
+    <button class="cat-pill active" onclick="filterCat('all',this)"><span class="cat-icon">🏠</span>All</button>
+    <button class="cat-pill" onclick="filterCat('studio',this)"><span class="cat-icon">🛋</span>Studio</button>
+    <button class="cat-pill" onclick="filterCat('1',this)"><span class="cat-icon">🛏</span>1 Bed</button>
+    <button class="cat-pill" onclick="filterCat('2',this)"><span class="cat-icon">🛏</span>2 Bed</button>
+    <button class="cat-pill" onclick="filterCat('3',this)"><span class="cat-icon">🏡</span>3+ Bed</button>
+    <button class="cat-pill" onclick="filterCat('gra',this)"><span class="cat-icon">🌿</span>GRA</button>
+    <button class="cat-pill" onclick="filterCat('summit',this)"><span class="cat-icon">⛰</span>Summit Road</button>
   </div>
 </div>
 
@@ -1812,6 +2441,109 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   </div>
 </div>
 
+
+<!-- Profile Backdrop -->
+<div class="profile-backdrop" id="profileBackdrop" onclick="closeProfile()"></div>
+
+<!-- Auth Modal (Sign In / Register) -->
+<div class="auth-overlay" id="authOverlay" onclick="handleAuthOverlay(event)">
+  <div class="auth-modal">
+    <div class="auth-head">
+      <h3 id="authTitle">Welcome Back</h3>
+      <button class="auth-close" onclick="closeAuthModal()">✕</button>
+    </div>
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="authTabLogin" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="auth-tab" id="authTabRegister" onclick="switchAuthTab('register')">Create Account</button>
+    </div>
+    <div class="auth-body">
+
+      <!-- Login Panel -->
+      <div id="authPanelLogin">
+        <div class="auth-fg"><label>Email Address</label><input type="email" id="authLoginEmail" placeholder="your@email.com"></div>
+        <div class="auth-fg"><label>Password</label><input type="password" id="authLoginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doSignIn()"></div>
+        <button class="auth-btn" onclick="doSignIn()">Sign In →</button>
+        <p class="auth-err" id="loginErr"></p>
+        <span class="forgot-link" onclick="doForgotPassword()">Forgot password?</span>
+        <p class="auth-success" id="resetSuccess">Password reset email sent. Check your inbox.</p>
+      </div>
+
+      <!-- Register Panel -->
+      <div id="authPanelRegister" style="display:none;">
+        <div class="auth-fg"><label>Full Name</label><input type="text" id="authRegName" placeholder="Your full name"></div>
+        <div class="auth-fg"><label>Email Address</label><input type="email" id="authRegEmail" placeholder="your@email.com"></div>
+        <div class="auth-fg"><label>Phone / WhatsApp</label><input type="tel" id="authRegPhone" placeholder="+234..."></div>
+        <div class="auth-fg"><label>Password</label><input type="password" id="authRegPass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')doRegister()"></div>
+        <button class="auth-btn" onclick="doRegister()">Create Account →</button>
+        <p class="auth-err" id="registerErr"></p>
+        <p class="auth-success" id="registerSuccess">Account created! You are now signed in.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Profile Sidebar -->
+<div class="profile-sidebar" id="profileSidebar">
+  <div class="profile-head">
+    <h3>My Profile</h3>
+    <button class="profile-close" onclick="closeProfile()">✕</button>
+  </div>
+  <div class="profile-body">
+
+    <!-- Avatar + Info -->
+    <div class="profile-avatar-section">
+      <div class="profile-avatar-wrap">
+        <div class="profile-avatar" id="profileAvatarEl">?</div>
+        <div class="profile-avatar-edit" onclick="document.getElementById('profilePhotoInput').click()" title="Change photo">📷</div>
+        <input type="file" id="profilePhotoInput" accept="image/*" style="display:none" onchange="uploadProfilePhoto(this.files[0])">
+      </div>
+      <div class="profile-info-brief">
+        <div class="profile-info-name" id="profileName">Guest</div>
+        <div class="profile-info-email" id="profileEmail"></div>
+        <div class="profile-info-badge">✓ Verified Guest</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="profile-tabs">
+      <button class="profile-tab active" onclick="switchProfileTab('details', this)">Details</button>
+      <button class="profile-tab" onclick="switchProfileTab('bookings', this)">My Bookings</button>
+      <button class="profile-tab" onclick="switchProfileTab('security', this)">Security</button>
+    </div>
+
+    <!-- Details Panel -->
+    <div class="profile-panel active" id="profile-panel-details">
+      <div class="profile-fg"><label>Full Name</label><input type="text" id="profileNameInput" placeholder="Your name"></div>
+      <div class="profile-fg"><label>Email</label><input type="email" id="profileEmailInput" placeholder="your@email.com" readonly style="opacity:0.6;cursor:not-allowed;"></div>
+      <div class="profile-fg"><label>Phone / WhatsApp</label><input type="tel" id="profilePhoneInput" placeholder="+234..."></div>
+      <div class="profile-fg"><label>Location</label><input type="text" id="profileLocationInput" placeholder="e.g. Lagos, Nigeria"></div>
+      <button class="profile-save-btn" onclick="saveProfileDetails()">Save Changes</button>
+      <p class="profile-save-msg" id="profileSaveMsg"></p>
+      <button class="profile-signout" onclick="doSignOut()">← Sign Out</button>
+    </div>
+
+    <!-- Bookings Panel -->
+    <div class="profile-panel" id="profile-panel-bookings">
+      <div id="bookingHistoryList"><div class="bh-empty">Loading your bookings…</div></div>
+    </div>
+
+    <!-- Security Panel -->
+    <div class="profile-panel" id="profile-panel-security">
+      <div class="profile-fg"><label>New Password</label><input type="password" id="newPassInput" placeholder="Min 6 characters"></div>
+      <div class="profile-fg"><label>Confirm Password</label><input type="password" id="confirmPassInput" placeholder="Repeat new password"></div>
+      <button class="profile-save-btn" onclick="changePassword()">Update Password</button>
+      <p class="profile-save-msg" id="passChangeMsg"></p>
+      <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--ash-faint);">
+        <p style="font-size:0.78rem;color:var(--ash-lt);margin-bottom:12px;">Forgot your password?</p>
+        <button onclick="doForgotPassword(true)" style="background:none;border:1.5px solid var(--ash-faint);color:var(--ash-lt);padding:10px 18px;border-radius:var(--radius);font-size:0.75rem;cursor:pointer;font-family:var(--font-body);transition:all var(--transition);">Send Reset Email</button>
+        <p class="profile-save-msg" id="secResetMsg"></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <!-- Payment Modal -->
 <div class="pay-overlay" id="payOverlay" onclick="handlePayOverlay(event)">
   <div class="pay-modal" style="max-width:580px;">
@@ -1885,7 +2617,7 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
             <span class="id-type-chip">Driver's Licence</span>
             <span class="id-type-chip">Voter's Card</span>
           </div>
-          <input type="file" id="idFileInput" accept="image/*,.pdf" style="display:none" onchange="handleIdUpload(this.files[0])">
+          <input type="file" id="idFileInput" accept="image/jpeg,image/png,image/webp,image/heic,application/pdf" style="display:none" onchange="handleIdUpload(this.files[0])">
           <img id="idPreview" class="id-preview" src="" alt="ID Preview">
         </div>
         <div class="id-upload-progress" id="idUploadProgress">
@@ -1975,6 +2707,8 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "681909366596",
   appId:             "1:681909366596:web:e995fd9b7eaa1e3e7ab111"
 };
+const CLOUDINARY_CLOUD  = "df5uashml";
+const CLOUDINARY_PRESET = "accent-homes";
 const WHATSAPP  = "2349029478440";
 const PAYSTACK_KEY = "pk_test_68320fa8de09a2c7ca08be638279212d111b6957";
 
@@ -2096,51 +2830,39 @@ async function loadListings(){
   }
 
   grid.innerHTML=listings.map(l=>`
-    <div class="listing-card" 
-         onclick="openAptModal('${l.id}')"
-         ontouchstart="this.classList.add('touched')"
-         ontouchend="this.classList.remove('touched')">
-      <div class="card-img">
+    <div class="listing-card" onclick="openAptModal('${l.id}')">
+      <!-- Image wrap -->
+      <div class="card-img-wrap">
         <div class="card-slides" id="slides_${l.id}">
-          ${(() => {
-            const imgs = (l.photos && l.photos.length ? l.photos : [l.image || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600']);
-            return imgs.map((src, i) => `
-              <div class="card-slide ${i===0?'active':''}" data-index="${i}">
-                <img src="${src}" alt="${l.name} photo ${i+1}" loading="lazy">
-              </div>`).join('');
+          ${(()=>{
+            const imgs=(l.photos&&l.photos.length?l.photos:[l.image||'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600']);
+            return imgs.map((src,i)=>`<div class="card-slide ${i===0?'active':''}" data-index="${i}"><img src="${src}" alt="${l.name}" loading="lazy"></div>`).join('');
           })()}
         </div>
-        ${(() => {
-          const imgs = (l.photos && l.photos.length ? l.photos : [l.image]).filter(Boolean);
-          if (imgs.length <= 1) return '';
-          return `
-          <div class="card-img-arrows">
-            <button class="card-img-arr" onclick="event.stopPropagation();cardImgNav('${l.id}',-1)">&#8592;</button>
-            <button class="card-img-arr" onclick="event.stopPropagation();cardImgNav('${l.id}',1)">&#8594;</button>
+        ${(()=>{
+          const imgs=(l.photos&&l.photos.length?l.photos:[l.image]).filter(Boolean);
+          if(imgs.length<=1)return '';
+          return `<div class="card-img-arrows">
+            <button class="card-img-arr" onclick="event.stopPropagation();cardImgNav('${l.id}',-1)">‹</button>
+            <button class="card-img-arr" onclick="event.stopPropagation();cardImgNav('${l.id}',1)">›</button>
           </div>
           <div class="card-img-dots" id="dots_${l.id}">
             ${imgs.map((_,i)=>`<button class="card-img-dot ${i===0?'active':''}" onclick="event.stopPropagation();cardImgGo('${l.id}',${i})"></button>`).join('')}
           </div>`;
         })()}
-        <span class="card-badge ${l.status==='booked'?'badge-booked':l.available===false?'badge-unavailable':'badge-available'}">
-          ${l.status==='booked'?'Booked':l.available===false?'Unavailable':'Available'}
+        <button class="card-heart" onclick="event.stopPropagation();this.classList.toggle('liked')" title="Save">♡</button>
+        <span class="card-badge ${l.status==='booked'?'badge-booked':'badge-avail'}">
+          ${l.status==='booked'?'Booked':'Available'}
         </span>
       </div>
+      <!-- Card body — Airbnb style -->
       <div class="card-body">
-        <div class="card-loc">📍 ${l.location||'Asaba, Delta State'}</div>
+        <div class="card-loc">📍 ${l.location||'Asaba GRA'}</div>
         <div class="card-name">${l.name}</div>
-        <div class="card-desc">${l.description||''}</div>
-        <div class="card-chips">
-          ${(l.amenities||[]).slice(0,4).map(a=>`<span class="chip">${a}</span>`).join('')}
-          ${l.bedrooms?`<span class="chip">🛏 ${l.bedrooms} Bed</span>`:''}
-        </div>
-        <div class="card-foot">
-          <div class="card-price">
-            <span class="amount">₦${Number(l.priceNight||0).toLocaleString()}</span>
-            <span class="unit">per night</span>
-            ${l.cautionDeposit?`<span class="caution">+ ₦${Number(l.cautionDeposit).toLocaleString()} caution</span>`:''}
-          </div>
-          <span style="font-size:0.72rem;color:var(--ash-lt);display:flex;align-items:center;gap:4px;">View details ›</span>
+        <div class="card-amen">${(l.amenities||[]).slice(0,3).join(' · ')}${l.bedrooms?' · '+l.bedrooms+' Bed':''}</div>
+        <div class="card-price-row">
+          <span class="card-price">₦${Number(l.priceNight||0).toLocaleString()}</span>
+          <span class="card-price-u">/ night</span>
         </div>
       </div>
     </div>
@@ -2152,6 +2874,9 @@ async function loadListings(){
   // Init carousel after DOM renders
   requestAnimationFrame(() => { requestAnimationFrame(() => { initCarousel(listings.length); }); });
 
+  // Update listing count
+  const countEl = document.getElementById('listingCount');
+  if(countEl) countEl.textContent = listings.length + ' residence' + (listings.length!==1?'s':'') + ' · Asaba';
   initReveal();
 }
 
@@ -2795,7 +3520,6 @@ function goToStep(step) {
     const err = validateStep1();
     if (err) { showErr('payErr1', err); return; }
     hideErr('payErr1');
-    populateReview();
   }
   if (step === 3 && currentStep === 2) {
     if (!uploadedIdUrl) { showErr('payErr2', 'Please upload a valid ID before continuing.'); return; }
@@ -2803,19 +3527,44 @@ function goToStep(step) {
     populateReview();
   }
 
-  // Hide all panels
-  document.querySelectorAll('.pay-step-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('pay-panel-' + step).classList.add('active');
+  const direction = step > currentStep ? 1 : -1;
+  const currentPanel = document.getElementById('pay-panel-' + currentStep);
+  const nextPanel    = document.getElementById('pay-panel-' + step);
 
-  // Update step indicators
-  for (let i = 1; i <= 3; i++) {
-    const ind  = document.getElementById('step-ind-' + i);
-    const line = document.getElementById('step-line-' + i);
-    ind.classList.remove('active','done');
-    if (line) line.classList.remove('done');
-    if (i < step)  { ind.classList.add('done'); if(line) line.classList.add('done'); }
-    if (i === step) ind.classList.add('active');
+  // Animate current panel out
+  if (currentPanel) {
+    currentPanel.style.animation = direction > 0
+      ? 'stepSlideOut 0.25s cubic-bezier(0.4,0,0.2,1) forwards'
+      : 'stepSlideOutRight 0.25s cubic-bezier(0.4,0,0.2,1) forwards';
+    setTimeout(() => {
+      currentPanel.classList.remove('active');
+      currentPanel.style.animation = '';
+
+      // Animate next panel in
+      nextPanel.style.animation = direction > 0
+        ? 'stepSlideIn 0.35s cubic-bezier(0.4,0,0.2,1) forwards'
+        : 'stepSlideInRight 0.35s cubic-bezier(0.4,0,0.2,1) forwards';
+      nextPanel.classList.add('active');
+
+      // Scroll modal to top
+      const modal = document.querySelector('.pay-modal');
+      if (modal) modal.scrollTop = 0;
+    }, 220);
+  } else {
+    nextPanel.classList.add('active');
   }
+
+  // Update step indicators with slight delay for smoothness
+  setTimeout(() => {
+    for (let i = 1; i <= 3; i++) {
+      const ind  = document.getElementById('step-ind-' + i);
+      const line = document.getElementById('step-line-' + i);
+      ind.classList.remove('active','done');
+      if (line) line.classList.remove('done');
+      if (i < step)  { ind.classList.add('done'); if(line) line.classList.add('done'); }
+      if (i === step) ind.classList.add('active');
+    }
+  }, 50);
 
   currentStep = step;
   document.getElementById('payModalTitle').textContent =
@@ -2878,57 +3627,97 @@ function handleIdDrop(e) {
 
 async function handleIdUpload(file) {
   if (!file) return;
-  if (file.size > 5 * 1024 * 1024) { showErr('payErr2', 'File is over 5MB. Please compress it first.'); return; }
+  if (file.size > 5 * 1024 * 1024) { showErr('payErr2', 'File is over 5MB. Please compress it.'); return; }
 
-  const zone     = document.getElementById('idUploadZone');
-  const progress = document.getElementById('idUploadProgress');
-  const bar      = document.getElementById('idProgressBar');
-  const pct      = document.getElementById('idUploadPct');
-  const nameEl   = document.getElementById('idUploadName');
-  const preview  = document.getElementById('idPreview');
-  const success  = document.getElementById('idUploadSuccess');
-  const nextBtn  = document.getElementById('step2Next');
+  const zone    = document.getElementById('idUploadZone');
+  const progress= document.getElementById('idUploadProgress');
+  const bar     = document.getElementById('idProgressBar');
+  const pct     = document.getElementById('idUploadPct');
+  const nameEl  = document.getElementById('idUploadName');
+  const preview = document.getElementById('idPreview');
+  const success = document.getElementById('idUploadSuccess');
+  const nextBtn = document.getElementById('step2Next');
 
+  // Reset state
   progress.style.display = 'block';
   nameEl.textContent     = file.name;
-  bar.style.width        = '30%';
+  bar.style.width        = '20%';
   pct.textContent        = 'Uploading…';
   success.style.display  = 'none';
+  hideErr('payErr2');
 
   const fd = new FormData();
   fd.append('file', file);
   fd.append('upload_preset', CLOUDINARY_PRESET);
   fd.append('folder', 'accent-homes/guest-ids');
+  // Set resource type based on file type
+  if (file.type === 'application/pdf') {
+    fd.append('resource_type', 'raw');
+  }
+
+  // Add 30 second timeout
+  const controller = new AbortController();
+  const timeout    = setTimeout(() => controller.abort(), 30000);
 
   try {
-    bar.style.width = '60%';
-    const res  = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', { method:'POST', body:fd });
-    bar.style.width = '90%';
+    bar.style.width = '50%';
+    pct.textContent = 'Uploading…';
+
+    const res = await fetch(
+      'https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/auto/upload',
+      { method:'POST', body:fd, signal:controller.signal }
+    );
+    clearTimeout(timeout);
+    bar.style.width = '85%';
+
+    // Check HTTP status
+    if (!res.ok) {
+      throw new Error('Server error ' + res.status + '. Check your Cloudinary preset.');
+    }
+
     const data = await res.json();
+    bar.style.width = '95%';
 
     if (data.secure_url) {
-      uploadedIdUrl      = data.secure_url;
-      bar.style.width    = '100%';
-      pct.textContent    = 'Done ✓';
+      uploadedIdUrl = data.secure_url;
+      bar.style.width  = '100%';
+      pct.textContent  = 'Done ✓';
       zone.classList.add('has-file');
-
-      // Show preview if image
       if (file.type.startsWith('image/')) {
         preview.src = data.secure_url;
         preview.style.display = 'block';
       }
-
-      setTimeout(() => { progress.style.display = 'none'; bar.style.width = '0%'; }, 800);
+      setTimeout(() => {
+        progress.style.display = 'none';
+        bar.style.width = '0%';
+        pct.textContent = '0%';
+      }, 900);
       success.style.display = 'block';
       nextBtn.disabled = false;
-      hideErr('payErr2');
     } else {
-      throw new Error(data.error ? data.error.message : 'Upload failed');
+      // Cloudinary returned an error object
+      const errMsg = data.error ? data.error.message : JSON.stringify(data);
+      throw new Error(errMsg);
     }
+
   } catch(err) {
+    clearTimeout(timeout);
     progress.style.display = 'none';
     bar.style.width = '0%';
-    showErr('payErr2', 'Upload failed: ' + err.message);
+    pct.textContent = '0%';
+    zone.classList.remove('has-file');
+
+    let userMsg = 'Upload failed. ';
+    if (err.name === 'AbortError') {
+      userMsg += 'Connection timed out. Check your internet and try again.';
+    } else if (err.message.includes('preset')) {
+      userMsg += 'Cloudinary preset error — make sure preset "' + CLOUDINARY_PRESET + '" is set to Unsigned in your Cloudinary dashboard.';
+    } else if (err.message.includes('401') || err.message.includes('403')) {
+      userMsg += 'Cloudinary authentication failed. Check your cloud name and preset.';
+    } else {
+      userMsg += err.message;
+    }
+    showErr('payErr2', userMsg);
   }
 }
 
@@ -2978,6 +3767,7 @@ async function initPay() {
       document.getElementById('confirmMsg').textContent =
         'Thank you ' + name + '. Your booking for ' + currentAptData.name + ' is confirmed.';
       document.getElementById('confirmRef').textContent = res.reference;
+      linkBookingToUser(res.reference);
       goToStep(4);
     },
     onClose: function() {
@@ -3061,13 +3851,531 @@ function handlePayOverlay(e) {
   if (e.target === document.getElementById('payOverlay')) closePay();
 }
 
+
+// ============================================================
+// GUEST AUTH SYSTEM
+// ============================================================
+let currentUser = null;
+
+// ── AUTH STATE LISTENER ──────────────────────────────────────
+function initAuth() {
+  if (!fbReady || !auth) return;
+  auth.onAuthStateChanged(async user => {
+    if (user) {
+      currentUser = user;
+      showApp(); // auto-skip login page
+      await loadUserProfile(user);
+      showLoggedInNav(user);
+    } else {
+      currentUser = null;
+      showLoggedOutNav();
+    }
+  });
+}
+
+function showLoggedInNav(user) {
+  const name = user.displayName || user.email.split('@')[0];
+  const avatar = document.getElementById('navAvatar');
+  if (!avatar) return;
+  if (user.photoURL) {
+    avatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    avatar.textContent = name.charAt(0).toUpperCase();
+  }
+}
+
+function showLoggedOutNav() {
+  const avatar = document.getElementById('navAvatar');
+  if (avatar) avatar.textContent = '?';
+}
+
+// ── AUTH MODAL ────────────────────────────────────────────────
+function openAuthModal(tab = 'login') {
+  switchAuthTab(tab);
+  document.getElementById('authOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeAuthModal() {
+  document.getElementById('authOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleAuthOverlay(e) {
+  if (e.target === document.getElementById('authOverlay')) closeAuthModal();
+}
+
+function switchAuthTab(tab) {
+  document.getElementById('authPanelLogin').style.display    = tab === 'login'    ? 'block' : 'none';
+  document.getElementById('authPanelRegister').style.display = tab === 'register' ? 'block' : 'none';
+  document.getElementById('authTabLogin').classList.toggle('active',    tab === 'login');
+  document.getElementById('authTabRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('authTitle').textContent = tab === 'login' ? 'Welcome Back' : 'Create Account';
+  ['loginErr','registerErr','registerSuccess','resetSuccess'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+}
+
+// ── SIGN IN ───────────────────────────────────────────────────
+async function doSignIn() {
+  const email = document.getElementById('authLoginEmail').value.trim();
+  const pass  = document.getElementById('authLoginPass').value;
+  const errEl = document.getElementById('loginErr');
+  errEl.style.display = 'none';
+
+  if (!fbReady || !auth) { errEl.textContent = 'Auth unavailable in demo mode.'; errEl.style.display = 'block'; return; }
+  if (!email || !pass)   { errEl.textContent = 'Please enter your email and password.'; errEl.style.display = 'block'; return; }
+
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+    closeAuthModal();
+  } catch(err) {
+    errEl.textContent =
+      err.code === 'auth/wrong-password'    ? 'Incorrect password. Please try again.' :
+      err.code === 'auth/user-not-found'    ? 'No account found with this email.' :
+      err.code === 'auth/too-many-requests' ? 'Too many attempts. Try again later.' :
+      'Sign in failed. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+// ── REGISTER ──────────────────────────────────────────────────
+async function doRegister() {
+  const name  = document.getElementById('authRegName').value.trim();
+  const email = document.getElementById('authRegEmail').value.trim();
+  const phone = document.getElementById('authRegPhone').value.trim();
+  const pass  = document.getElementById('authRegPass').value;
+  const errEl = document.getElementById('registerErr');
+  const sucEl = document.getElementById('registerSuccess');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+
+  if (!name || !email || !pass) { errEl.textContent = 'Please fill all required fields.'; errEl.style.display = 'block'; return; }
+  if (pass.length < 6)          { errEl.textContent = 'Password must be at least 6 characters.'; errEl.style.display = 'block'; return; }
+  if (!fbReady || !auth)        { errEl.textContent = 'Auth unavailable in demo mode.'; errEl.style.display = 'block'; return; }
+
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.updateProfile({ displayName: name });
+    // Save extra profile data
+    await db.collection('guestProfiles').doc(cred.user.uid).set({
+      name, email, phone, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    sucEl.style.display = 'block';
+    setTimeout(() => closeAuthModal(), 1500);
+  } catch(err) {
+    errEl.textContent =
+      err.code === 'auth/email-already-in-use' ? 'An account with this email already exists.' :
+      err.code === 'auth/invalid-email'         ? 'Please enter a valid email address.' :
+      'Registration failed. Please try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+// ── FORGOT PASSWORD ───────────────────────────────────────────
+async function doForgotPassword(fromSecurity = false) {
+  const email = fromSecurity
+    ? (currentUser ? currentUser.email : '')
+    : document.getElementById('authLoginEmail').value.trim();
+
+  if (!email) {
+    const errEl = document.getElementById('loginErr');
+    errEl.textContent = 'Enter your email above first.';
+    errEl.style.display = 'block';
+    return;
+  }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    if (fromSecurity) {
+      const msg = document.getElementById('secResetMsg');
+      msg.style.color = 'var(--green)';
+      msg.textContent = '✅ Reset email sent to ' + email;
+      msg.style.display = 'block';
+    } else {
+      document.getElementById('resetSuccess').style.display = 'block';
+    }
+  } catch(e) {
+    const el = fromSecurity ? document.getElementById('secResetMsg') : document.getElementById('loginErr');
+    el.style.color = 'var(--red)';
+    el.textContent = 'Could not send reset email.';
+    el.style.display = 'block';
+  }
+}
+
+// ── SIGN OUT ──────────────────────────────────────────────────
+async function doSignOut() {
+  if (fbReady && auth) await auth.signOut();
+  closeProfile();
+  currentUser = null;
+  showLoggedOutNav();
+}
+
+// ============================================================
+// PROFILE SIDEBAR
+// ============================================================
+function openProfile() {
+  document.getElementById('profileSidebar').classList.add('open');
+  document.getElementById('profileBackdrop').classList.add('open');
+  document.body.style.overflow = 'hidden';
+  loadBookingHistory();
+}
+function closeProfile() {
+  document.getElementById('profileSidebar').classList.remove('open');
+  document.getElementById('profileBackdrop').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function switchProfileTab(tab, btn) {
+  document.querySelectorAll('.profile-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('profile-panel-' + tab).classList.add('active');
+  btn.classList.add('active');
+  if (tab === 'bookings') loadBookingHistory();
+}
+
+// ── LOAD PROFILE ──────────────────────────────────────────────
+async function loadUserProfile(user) {
+  const name  = user.displayName || user.email.split('@')[0];
+  const email = user.email;
+
+  // Nav avatar
+  const navAvatar = document.getElementById('navAvatar');
+  if (user.photoURL) {
+    navAvatar.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    navAvatar.textContent = name.charAt(0).toUpperCase();
+  }
+
+  // Sidebar profile
+  document.getElementById('profileName').textContent       = name;
+  document.getElementById('profileEmail').textContent      = email;
+  document.getElementById('profileNameInput').value        = name;
+  document.getElementById('profileEmailInput').value       = email;
+
+  // Profile avatar
+  const avatarEl = document.getElementById('profileAvatarEl');
+  if (user.photoURL) {
+    avatarEl.innerHTML = `<img src="${user.photoURL}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+  } else {
+    avatarEl.textContent = name.charAt(0).toUpperCase();
+    avatarEl.style.lineHeight = '72px';
+  }
+
+  // Load extra profile from Firestore
+  if (fbReady) {
+    try {
+      const doc = await db.collection('guestProfiles').doc(user.uid).get();
+      if (doc.exists) {
+        const data = doc.data();
+        if (data.phone)    document.getElementById('profilePhoneInput').value    = data.phone;
+        if (data.location) document.getElementById('profileLocationInput').value = data.location;
+      }
+    } catch(e) {}
+  }
+}
+
+// ── SAVE PROFILE ──────────────────────────────────────────────
+async function saveProfileDetails() {
+  if (!currentUser) return;
+  const name     = document.getElementById('profileNameInput').value.trim();
+  const phone    = document.getElementById('profilePhoneInput').value.trim();
+  const location = document.getElementById('profileLocationInput').value.trim();
+  const msgEl    = document.getElementById('profileSaveMsg');
+
+  try {
+    await currentUser.updateProfile({ displayName: name });
+    if (fbReady) {
+      await db.collection('guestProfiles').doc(currentUser.uid).set({
+        name, phone, location, email: currentUser.email,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+    }
+    // Update nav
+    document.getElementById('navGuestName').textContent  = name;
+    document.getElementById('profileName').textContent   = name;
+    msgEl.style.color   = 'var(--green)';
+    msgEl.textContent   = '✅ Profile updated successfully.';
+    msgEl.style.display = 'block';
+    setTimeout(() => msgEl.style.display = 'none', 3000);
+  } catch(e) {
+    msgEl.style.color   = 'var(--red)';
+    msgEl.textContent   = 'Could not save profile.';
+    msgEl.style.display = 'block';
+  }
+}
+
+// ── UPLOAD PROFILE PHOTO ──────────────────────────────────────
+async function uploadProfilePhoto(file) {
+  if (!file || !currentUser) return;
+  const avatarEl = document.getElementById('profileAvatarEl');
+  avatarEl.textContent = '⏳';
+
+  const fd = new FormData();
+  fd.append('file', file);
+  fd.append('upload_preset', CLOUDINARY_PRESET);
+  fd.append('folder', 'accent-homes/guest-avatars');
+
+  try {
+    const res  = await fetch('https://api.cloudinary.com/v1_1/' + CLOUDINARY_CLOUD + '/image/upload', { method:'POST', body:fd });
+    const data = await res.json();
+    if (data.secure_url) {
+      await currentUser.updateProfile({ photoURL: data.secure_url });
+      if (fbReady) {
+        await db.collection('guestProfiles').doc(currentUser.uid).set({ photoURL: data.secure_url }, { merge:true });
+      }
+      avatarEl.innerHTML = `<img src="${data.secure_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      // Update nav
+      document.getElementById('navAvatar').innerHTML = `<img src="${data.secure_url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+    }
+  } catch(e) {
+    avatarEl.textContent = '?';
+    alert('Photo upload failed: ' + e.message);
+  }
+}
+
+// ── BOOKING HISTORY ───────────────────────────────────────────
+async function loadBookingHistory() {
+  if (!currentUser) return;
+  const listEl = document.getElementById('bookingHistoryList');
+  listEl.innerHTML = '<div class="bh-empty">Loading…</div>';
+
+  try {
+    let bookings = [];
+    if (fbReady) {
+      const snap = await db.collection('bookings')
+        .where('email', '==', currentUser.email)
+        .orderBy('createdAt', 'desc')
+        .get();
+      bookings = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+    } else {
+      const all = JSON.parse(localStorage.getItem('ah_bookings') || '[]');
+      bookings = all.filter(b => b.email === currentUser.email);
+    }
+
+    if (!bookings.length) {
+      listEl.innerHTML = '<div class="bh-empty">No bookings yet. Your booking history will appear here.</div>';
+      return;
+    }
+
+    listEl.innerHTML = bookings.map(b => `
+      <div class="booking-history-item">
+        <div class="bh-ref">Ref: ${b.ref || b.id}</div>
+        <div class="bh-apt">${b.apartment || '—'}</div>
+        <div class="bh-dates">📅 ${b.checkIn||'—'} → ${b.checkOut||'—'} · ${b.nights||'?'} night${(b.nights||1)>1?'s':''}</div>
+        <div class="bh-footer">
+          <div class="bh-amount">₦${Number(b.total||0).toLocaleString()}</div>
+          <span class="bh-status ${b.status==='confirmed'||b.status==='approved'?'bh-confirmed':'bh-pending'}">
+            ${b.status==='confirmed'||b.status==='approved'?'✓ Confirmed':'⏳ Pending'}
+          </span>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {
+    listEl.innerHTML = '<div class="bh-empty">Could not load bookings.</div>';
+  }
+}
+
+// ── CHANGE PASSWORD ───────────────────────────────────────────
+async function changePassword() {
+  const newPass     = document.getElementById('newPassInput').value;
+  const confirmPass = document.getElementById('confirmPassInput').value;
+  const msgEl       = document.getElementById('passChangeMsg');
+
+  if (!newPass || newPass.length < 6) { msgEl.style.color='var(--red)'; msgEl.textContent='Password must be at least 6 characters.'; msgEl.style.display='block'; return; }
+  if (newPass !== confirmPass)         { msgEl.style.color='var(--red)'; msgEl.textContent='Passwords do not match.'; msgEl.style.display='block'; return; }
+
+  try {
+    await currentUser.updatePassword(newPass);
+    msgEl.style.color   = 'var(--green)';
+    msgEl.textContent   = '✅ Password updated successfully.';
+    msgEl.style.display = 'block';
+    document.getElementById('newPassInput').value     = '';
+    document.getElementById('confirmPassInput').value = '';
+  } catch(e) {
+    msgEl.style.color   = 'var(--red)';
+    msgEl.textContent   = e.code === 'auth/requires-recent-login'
+      ? 'Please sign out and sign back in before changing your password.'
+      : 'Could not update password.';
+    msgEl.style.display = 'block';
+  }
+}
+
+// After successful booking — link to user account
+async function linkBookingToUser(bookingRef) {
+  if (!currentUser || !fbReady) return;
+  try {
+    const snap = await db.collection('bookings').where('ref', '==', bookingRef).get();
+    if (!snap.empty) {
+      await snap.docs[0].ref.update({ guestUid: currentUser.uid });
+    }
+  } catch(e) {}
+}
+
+
+// ============================================================
+// LOGIN PAGE
+// ============================================================
+function switchLTab(tab) {
+  document.getElementById('lpSignin').classList.toggle('active', tab==='signin');
+  document.getElementById('lpReg').classList.toggle('active', tab==='register');
+  document.getElementById('ltSign').classList.toggle('active', tab==='signin');
+  document.getElementById('ltReg').classList.toggle('active', tab==='register');
+  ['liErr','regErr','regSuc','liReset'].forEach(id => {
+    const el = document.getElementById(id); if(el) el.style.display='none';
+  });
+}
+
+function showApp() {
+  const lp = document.getElementById('loginPage');
+  const app = document.getElementById('app') || document.body;
+  lp.classList.add('hiding');
+  setTimeout(() => { lp.classList.add('gone'); }, 500);
+}
+
+async function doLSignIn() {
+  const email = document.getElementById('liEmail').value.trim();
+  const pass  = document.getElementById('liPass').value;
+  const errEl = document.getElementById('liErr');
+  errEl.style.display = 'none';
+
+  if (!fbReady || !auth) { continueAsGuest(); return; }
+  if (!email || !pass) { errEl.textContent='Please enter email and password.'; errEl.style.display='block'; return; }
+
+  try {
+    await auth.signInWithEmailAndPassword(email, pass);
+    showApp();
+  } catch(err) {
+    errEl.textContent =
+      err.code==='auth/wrong-password'    ? 'Incorrect password.' :
+      err.code==='auth/user-not-found'    ? 'No account with this email.' :
+      err.code==='auth/too-many-requests' ? 'Too many attempts. Try later.' :
+      'Sign in failed. Try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+async function doLRegister() {
+  const name  = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const phone = document.getElementById('regPhone').value.trim();
+  const pass  = document.getElementById('regPass').value;
+  const errEl = document.getElementById('regErr');
+  const sucEl = document.getElementById('regSuc');
+  errEl.style.display = 'none'; sucEl.style.display = 'none';
+
+  if (!name||!email||!pass) { errEl.textContent='Please fill all fields.'; errEl.style.display='block'; return; }
+  if (pass.length<6) { errEl.textContent='Password must be at least 6 characters.'; errEl.style.display='block'; return; }
+  if (!fbReady||!auth) { continueAsGuest(); return; }
+
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.updateProfile({ displayName: name });
+    if (fbReady) {
+      await db.collection('guestProfiles').doc(cred.user.uid).set({
+        name, email, phone, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }
+    sucEl.style.display = 'block';
+    setTimeout(() => showApp(), 1200);
+  } catch(err) {
+    errEl.textContent =
+      err.code==='auth/email-already-in-use' ? 'An account with this email already exists.' :
+      'Registration failed. Try again.';
+    errEl.style.display = 'block';
+  }
+}
+
+async function doLForgot() {
+  const email = document.getElementById('liEmail').value.trim();
+  const errEl = document.getElementById('liErr');
+  const sucEl = document.getElementById('liReset');
+  if (!email) { errEl.textContent='Enter your email above first.'; errEl.style.display='block'; return; }
+  try {
+    await auth.sendPasswordResetEmail(email);
+    sucEl.style.display = 'block';
+    errEl.style.display = 'none';
+  } catch(e) {
+    errEl.textContent = 'Could not send reset email.'; errEl.style.display = 'block';
+  }
+}
+
+function continueAsGuest() {
+  showApp();
+}
+
+// ============================================================
+// CATEGORY FILTER
+// ============================================================
+function filterCat(cat, btn) {
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  
+  const cards = document.querySelectorAll('.listing-card');
+  let shown = 0;
+  cards.forEach(card => {
+    let show = true;
+    if (cat !== 'all') {
+      const name = (card.querySelector('.card-name')||{}).textContent||'';
+      const loc  = (card.querySelector('.card-loc')||{}).textContent||'';
+      const amen = (card.querySelector('.card-amen')||{}).textContent||'';
+      const combined = (name+loc+amen).toLowerCase();
+      if (cat==='studio')  show = combined.includes('studio');
+      else if (cat==='1')  show = combined.includes('1 bed') || combined.includes('one bed') || combined.includes('haven') || combined.includes('suite');
+      else if (cat==='2')  show = combined.includes('2 bed') || combined.includes('two bed');
+      else if (cat==='3')  show = combined.includes('3 bed') || combined.includes('4 bed') || combined.includes('three');
+      else if (cat==='gra') show = combined.includes('gra');
+      else if (cat==='summit') show = combined.includes('summit');
+    }
+    card.style.display = show ? '' : 'none';
+    if (show) shown++;
+  });
+  const countEl = document.getElementById('listingCount');
+  if (countEl) countEl.textContent = shown + ' residence' + (shown!==1?'s':'') + ' · Asaba';
+}
+
+// ============================================================
+// MOBILE BOTTOM NAV
+// ============================================================
+function setMobNav(idx) {
+  document.querySelectorAll('.mob-item').forEach((el,i) => {
+    el.classList.toggle('active', i===idx);
+  });
+}
+
+// ============================================================
+// PROFILE TOGGLE
+// ============================================================
+function toggleProfile() {
+  const sidebar = document.getElementById('profileSidebar');
+  if (sidebar && sidebar.classList.contains('open')) {
+    closeProfile();
+  } else {
+    openProfile();
+  }
+}
+
 // ============================================================
 // INIT
 // ============================================================
 initFB();
+initAuth();
 loadListings();
 loadDynamicContent();
 initReveal();
 </script>
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="mob-nav" id="mobNav">
+  <button class="mob-item active" id="mni1" onclick="scrollTo({top:0,behavior:'smooth'});setMobNav(0)">
+    <span class="mob-icon">🏠</span>Home
+  </button>
+  <button class="mob-item" id="mni2" onclick="document.getElementById('neighbourhood').scrollIntoView({behavior:'smooth'});setMobNav(1)">
+    <span class="mob-icon">🔍</span>Explore
+  </button>
+  <button class="mob-item" id="mni3" onclick="switchPsTab('bookings',document.querySelector('.ps-tab:nth-child(2)'));openProfile();setMobNav(2)">
+    <span class="mob-icon">📋</span>Bookings
+  </button>
+  <button class="mob-item" id="mni4" onclick="openProfile();setMobNav(3)">
+    <span class="mob-icon">👤</span>Profile
+  </button>
+</nav>
+
 </body>
 </html>
