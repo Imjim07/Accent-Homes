@@ -3332,52 +3332,70 @@ async function handleIdUpload(file) {
 // ── PAYMENT — updated initPay ──────────────────────────────────
 async function initPay() {
   if (!currentAptData) return;
-  const name    = (document.getElementById('pName')||{}).value?.trim()||'';
-  const phone   = (document.getElementById('pPhone')||{}).value?.trim()||'';
-  const email   = (document.getElementById('pEmail')||{}).value?.trim()||'';
-  const ci      = (document.getElementById('pIn')||{}).value||'';
-  const co      = (document.getElementById('pOut')||{}).value||'';
-  const nights  = Math.ceil((new Date(co)-new Date(ci))/(1000*60*60*24));
-  const rent    = Number(currentAptData.priceNight||0)*nights;
-  const caution = Number(currentAptData.cautionDeposit||0);
-  const total   = rent+caution;
-  const ref     = 'AH-'+Date.now();
+
+  const name    = document.getElementById('pName')?.value?.trim() || '';
+  const phone   = document.getElementById('pPhone')?.value?.trim() || '';
+  const email   = document.getElementById('pEmail')?.value?.trim() || '';
+  const ci      = document.getElementById('pIn')?.value || '';
+  const co      = document.getElementById('pOut')?.value || '';
+  const nights  = Math.ceil((new Date(co) - new Date(ci)) / (1000 * 60 * 60 * 24));
+  const rent    = Number(currentAptData.priceNight || 0) * nights;
+  const caution = Number(currentAptData.cautionDeposit || 0);
+  const total   = rent + caution;
+  const ref     = 'AH-' + Date.now();
+
+  // Validate before touching Paystack
+  if (!email || !email.includes('@')) {
+    showErr('payErr3', 'A valid email address is required. Go back to Step 1 and enter your email.');
+    return;
+  }
+  if (nights <= 0) {
+    showErr('payErr3', 'Invalid dates — please go back and select valid check-in / check-out dates.');
+    return;
+  }
+  if (total <= 0) {
+    showErr('payErr3', 'Booking total is ₦0. Please contact us on WhatsApp to complete your booking.');
+    return;
+  }
+  if (typeof PaystackPop === 'undefined') {
+    showErr('payErr3', 'Payment system failed to load. Check your internet connection and refresh the page.');
+    return;
+  }
 
   const btn = document.getElementById('payBtn');
-  if (btn) { btn.disabled=true; btn.textContent='Opening payment…'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Opening payment…'; }
 
-  // Store snapshot before async ops
   const aptData = Object.assign({}, currentAptData);
 
+  // Temporarily hide the pay overlay so the Paystack popup has no stacking-context competition
+  const overlay = document.getElementById('payOverlay');
+  if (overlay) overlay.style.visibility = 'hidden';
+
   function onPaymentSuccess(res) {
-    // Show confirmation immediately
+    if (overlay) overlay.style.visibility = '';
     const cm = document.getElementById('confirmMsg');
     const cr = document.getElementById('confirmRef');
-    if (cm) cm.textContent = 'Thank you '+name+'. Your booking for '+aptData.name+' is confirmed.';
+    if (cm) cm.textContent = 'Thank you ' + name + '. Your booking for ' + aptData.name + ' is confirmed.';
     if (cr) cr.textContent = res.reference;
     goToStep(4);
 
-    // Save in background
     saveBooking({
       ref: res.reference,
       guestName: name, phone: phone, email: email,
       apartment: aptData.name, apartmentId: aptData.id,
-      location: aptData.location||'',
+      location: aptData.location || '',
       checkIn: ci, checkOut: co,
       nights: nights, rent: rent, caution: caution, total: total,
       idUrl: uploadedIdUrl, status: 'pending',
       createdAt: new Date().toISOString()
-    }).then(function() {
-      return updateListing(aptData.id, {status:'booked', available:false});
-    }).then(function() {
-      loadListings();
-    }).catch(function(e) {
-      console.error('Booking save error:', e);
-    });
+    }).then(() => updateListing(aptData.id, { status: 'booked', available: false }))
+      .then(() => loadListings())
+      .catch(e => console.error('Booking save error:', e));
   }
 
   function onPaymentClose() {
-    if (btn) { btn.disabled=false; btn.textContent='Pay Now →'; }
+    if (overlay) overlay.style.visibility = '';
+    if (btn) { btn.disabled = false; btn.textContent = 'Pay Now →'; }
   }
 
   try {
@@ -3391,10 +3409,11 @@ async function initPay() {
       onClose:  onPaymentClose
     });
     handler.openIframe();
-  } catch(e) {
+  } catch (e) {
+    if (overlay) overlay.style.visibility = '';
+    if (btn) { btn.disabled = false; btn.textContent = 'Pay Now →'; }
+    showErr('payErr3', 'Payment could not open: ' + e.message);
     console.error('Paystack error:', e);
-    if (btn) { btn.disabled=false; btn.textContent='Pay Now →'; }
-    alert('Payment could not open: ' + e.message);
   }
 }
 
