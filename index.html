@@ -3985,6 +3985,154 @@ function togglePwd(inputId, btn) {
   btn.textContent = show ? '🙈' : '👁';
 }
 
+
+// ============================================================
+// APARTMENT DETAIL MODAL
+// ============================================================
+let aptImgIndex = 0;
+let aptImgList  = [];
+
+async function openAptModal(id) {
+  const listings = await getListings();
+  const l = listings.find(x => x.id === id);
+  if (!l) return;
+  currentAptData = l;
+
+  // Build photo list
+  aptImgList = (l.photos && l.photos.length)
+    ? l.photos
+    : [l.image || 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=1200'];
+  aptImgIndex = 0;
+
+  // Populate gallery
+  const imgEl = document.getElementById('aptGalleryImg');
+  if (imgEl) imgEl.src = aptImgList[0];
+  updateAptPhotoCount();
+
+  // Populate text
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+  set('aptLocation', '📍 ' + (l.location || 'Asaba, Delta State'));
+  set('aptName',     l.name);
+  set('aptDesc',     l.description || '');
+  set('aptPrice',    '₦' + Number(l.priceNight||0).toLocaleString());
+  set('aptCaution',  l.cautionDeposit ? '+ ₦' + Number(l.cautionDeposit).toLocaleString() + ' caution (refundable)' : '');
+  set('aptFooterPrice', '₦' + Number(l.priceNight||0).toLocaleString());
+
+  // Amenities grid
+  const AMENITY_MAP = {
+    'wifi':         { icon:'📶', desc:'High-Speed WiFi' },
+    'ac':           { icon:'❄️',  desc:'Air Conditioning' },
+    'smart tv':     { icon:'📺', desc:'Smart TV' },
+    'tv':           { icon:'📺', desc:'Smart TV' },
+    'kitchen':      { icon:'🍳', desc:'Fully Equipped Kitchen' },
+    'full kitchen': { icon:'🍳', desc:'Full Kitchen' },
+    'parking':      { icon:'🚗', desc:'Free Parking' },
+    'workspace':    { icon:'💻', desc:'Work Desk' },
+    'gym access':   { icon:'🏋️', desc:'Gym Access' },
+    'terrace':      { icon:'🌿', desc:'Private Terrace' },
+    'pool':         { icon:'🏊', desc:'Swimming Pool' },
+    'security':     { icon:'🔒', desc:'24/7 Security' },
+    'generator':    { icon:'⚡', desc:'Backup Generator' },
+    'laundry':      { icon:'🫧', desc:'Laundry' },
+    'balcony':      { icon:'🏙️', desc:'Balcony' },
+  };
+  const amenities = [...(l.amenities || [])];
+  if (l.bedrooms) amenities.push(l.bedrooms + ' Bedroom' + (l.bedrooms > 1 ? 's' : ''));
+  const amenEl = document.getElementById('aptAmenities');
+  if (amenEl) amenEl.innerHTML = amenities.map(a => {
+    const key  = a.toLowerCase().trim();
+    const info = AMENITY_MAP[key] || { icon:'✓', desc: a };
+    return `<div class="amenity-item">
+      <div class="amenity-ico">${info.icon}</div>
+      <div class="amenity-label">${info.desc}</div>
+    </div>`;
+  }).join('');
+
+  // WhatsApp button
+  const waBtn = document.getElementById('aptWaBtn');
+  if (waBtn) waBtn.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent('Hello Accent Homes, I am interested in ' + l.name);
+
+  // Book button
+  const bookBtn = document.getElementById('aptBookBtn');
+  if (bookBtn) {
+    if (l.status === 'booked') {
+      bookBtn.textContent = 'Currently Booked';
+      bookBtn.disabled    = true;
+    } else {
+      bookBtn.textContent = 'Book & Pay';
+      bookBtn.disabled    = false;
+    }
+  }
+
+  // Load host card from Firebase
+  loadHostCardForModal();
+
+  // Open overlay
+  document.getElementById('aptOverlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeApt() {
+  document.getElementById('aptOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleAptBdrop(e) {
+  if (e.target === document.getElementById('aptOverlay')) closeApt();
+}
+
+function aptNav(dir) {
+  aptImgIndex = (aptImgIndex + dir + aptImgList.length) % aptImgList.length;
+  const imgEl = document.getElementById('aptGalleryImg');
+  if (imgEl) imgEl.src = aptImgList[aptImgIndex];
+  updateAptPhotoCount();
+}
+
+function updateAptPhotoCount() {
+  const el = document.getElementById('aptPhotoCount');
+  if (el && aptImgList.length > 1) {
+    el.textContent = (aptImgIndex + 1) + ' / ' + aptImgList.length;
+  } else if (el) {
+    el.textContent = '';
+  }
+}
+
+function aptBook() {
+  if (!currentAptData) return;
+  const aptId = currentAptData.id;
+  closeApt();
+  openPay(aptId);
+}
+
+async function loadHostCardForModal() {
+  if (!fbReady) return;
+  try {
+    const doc = await db.collection('settings').doc('hostCard').get();
+    if (!doc.exists) return;
+    const d = doc.data();
+    const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
+    const setHtml = (id, html) => { const el=document.getElementById(id); if(el) el.innerHTML=html; };
+    if (d.name)         set('hostNameEl', d.name);
+    if (d.title)        set('hostTitleEl', d.title);
+    if (d.rating)       set('hostRatingEl', d.rating + '★');
+    if (d.response)     set('hostRespEl', d.response);
+    if (d.since)        set('hostSinceEl', d.since);
+    if (d.responseTime) set('hostRespTimeEl', '⏱ ' + d.responseTime);
+    if (d.photo) {
+      const ava = document.getElementById('hostAva');
+      if (ava) ava.innerHTML = '<img src="' + d.photo + '" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">';
+    }
+  } catch(e) {}
+}
+
+// Keyboard nav for apt modal
+document.addEventListener('keydown', function(e) {
+  if (!document.getElementById('aptOverlay').classList.contains('open')) return;
+  if (e.key === 'Escape')     closeApt();
+  if (e.key === 'ArrowLeft')  aptNav(-1);
+  if (e.key === 'ArrowRight') aptNav(1);
+});
+
 // ============================================================
 // INIT
 // ============================================================
