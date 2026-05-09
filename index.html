@@ -1826,6 +1826,18 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
 }
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 
+
+/* Password toggle */
+.pwd-wrap { position:relative; }
+.pwd-wrap input { padding-right:44px !important; width:100%; }
+.pwd-toggle {
+  position:absolute; right:12px; top:50%; transform:translateY(-50%);
+  background:none; border:none; cursor:pointer;
+  font-size:1rem; color:var(--ash-lt); padding:0;
+  transition:color 0.2s; line-height:1;
+}
+.pwd-toggle:hover { color:var(--ash); }
+
 </style>
 </head>
 <body>
@@ -1858,7 +1870,13 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
     <!-- Sign In -->
     <div class="l-panel active" id="lpSignin">
       <div class="l-fg"><label>Email</label><input type="email" id="liEmail" placeholder="your@email.com" onkeydown="if(event.key==='Enter')doLSignIn()"></div>
-      <div class="l-fg"><label>Password</label><input type="password" id="liPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLSignIn()"></div>
+      <div class="l-fg">
+        <label>Password</label>
+        <div class="pwd-wrap">
+          <input type="password" id="liPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLSignIn()">
+          <button class="pwd-toggle" type="button" onclick="togglePwd('liPass',this)" tabindex="-1">👁</button>
+        </div>
+      </div>
       <button class="l-btn" onclick="doLSignIn()">Sign In →</button>
       <p class="l-err" id="liErr"></p>
       <span class="l-forgot" onclick="doLForgot()">Forgot your password?</span>
@@ -1871,7 +1889,13 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
       <div class="l-fg"><label>Full Name</label><input type="text" id="regName" placeholder="Your full name"></div>
       <div class="l-fg"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"></div>
       <div class="l-fg"><label>Phone / WhatsApp</label><input type="tel" id="regPhone" placeholder="+234..."></div>
-      <div class="l-fg"><label>Password</label><input type="password" id="regPass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')doLRegister()"></div>
+      <div class="l-fg">
+        <label>Password</label>
+        <div class="pwd-wrap">
+          <input type="password" id="regPass" placeholder="Min 6 characters" onkeydown="if(event.key==='Enter')doLRegister()">
+          <button class="pwd-toggle" type="button" onclick="togglePwd('regPass',this)" tabindex="-1">👁</button>
+        </div>
+      </div>
       <button class="l-btn" onclick="doLRegister()">Create Account →</button>
       <p class="l-err" id="regErr"></p>
       <p class="l-suc" id="regSuc">Account created! Signing you in…</p>
@@ -3308,64 +3332,70 @@ async function handleIdUpload(file) {
 // ── PAYMENT — updated initPay ──────────────────────────────────
 async function initPay() {
   if (!currentAptData) return;
-  const name  = document.getElementById('pName').value.trim();
-  const phone = document.getElementById('pPhone').value.trim();
-  const email = document.getElementById('pEmail').value.trim();
-  const ci    = document.getElementById('pIn').value;
-  const co    = document.getElementById('pOut').value;
-  const nights = Math.ceil((new Date(co) - new Date(ci)) / (1000*60*60*24));
-  const rent   = Number(currentAptData.priceNight||0) * nights;
+  const name    = (document.getElementById('pName')||{}).value?.trim()||'';
+  const phone   = (document.getElementById('pPhone')||{}).value?.trim()||'';
+  const email   = (document.getElementById('pEmail')||{}).value?.trim()||'';
+  const ci      = (document.getElementById('pIn')||{}).value||'';
+  const co      = (document.getElementById('pOut')||{}).value||'';
+  const nights  = Math.ceil((new Date(co)-new Date(ci))/(1000*60*60*24));
+  const rent    = Number(currentAptData.priceNight||0)*nights;
   const caution = Number(currentAptData.cautionDeposit||0);
-  const total   = rent + caution;
-  const ref     = 'AH-' + Date.now();
+  const total   = rent+caution;
+  const ref     = 'AH-'+Date.now();
 
   const btn = document.getElementById('payBtn');
-  btn.disabled = true; btn.textContent = 'Opening payment…';
+  if (btn) { btn.disabled=true; btn.textContent='Opening payment…'; }
 
-  const handler = PaystackPop.setup({
-    key: PAYSTACK_KEY, email, amount: total * 100, currency: 'NGN', ref,
-    metadata: { custom_fields: [
-      { display_name:'Guest Name',  variable_name:'guest_name',  value:name },
-      { display_name:'Phone',       variable_name:'phone',       value:phone },
-      { display_name:'Apartment',   variable_name:'apartment',   value:currentAptData.name },
-      { display_name:'Check-In',    variable_name:'check_in',    value:ci },
-      { display_name:'Check-Out',   variable_name:'check_out',   value:co },
-      { display_name:'ID Uploaded', variable_name:'id_url',      value:uploadedIdUrl }
-    ]},
-    callback: async function(res) {
-      await saveBooking({
-        ref: res.reference,
-        guestName: name, phone, email,
-        apartment: currentAptData.name,
-        apartmentId: currentAptData.id,
-        location: currentAptData.location||'',
-        checkIn: ci, checkOut: co, nights, rent, caution, total,
-        idUrl: uploadedIdUrl,
-        status: 'pending',
-        createdAt: new Date().toISOString()
-      });
-      await updateListing(currentAptData.id, { status:'booked', available:false });
+  // Store snapshot before async ops
+  const aptData = Object.assign({}, currentAptData);
+
+  function onPaymentSuccess(res) {
+    // Show confirmation immediately
+    const cm = document.getElementById('confirmMsg');
+    const cr = document.getElementById('confirmRef');
+    if (cm) cm.textContent = 'Thank you '+name+'. Your booking for '+aptData.name+' is confirmed.';
+    if (cr) cr.textContent = res.reference;
+    goToStep(4);
+
+    // Save in background
+    saveBooking({
+      ref: res.reference,
+      guestName: name, phone: phone, email: email,
+      apartment: aptData.name, apartmentId: aptData.id,
+      location: aptData.location||'',
+      checkIn: ci, checkOut: co,
+      nights: nights, rent: rent, caution: caution, total: total,
+      idUrl: uploadedIdUrl, status: 'pending',
+      createdAt: new Date().toISOString()
+    }).then(function() {
+      return updateListing(aptData.id, {status:'booked', available:false});
+    }).then(function() {
       loadListings();
+    }).catch(function(e) {
+      console.error('Booking save error:', e);
+    });
+  }
 
-      // Show confirmation step
-      document.getElementById('confirmMsg').textContent =
-        'Thank you ' + name + '. Your booking for ' + currentAptData.name + ' is confirmed.';
-      document.getElementById('confirmRef').textContent = res.reference;
-      linkBookingToUser(res.reference);
-      goToStep(4);
-    },
-    onClose: function() {
-      btn.disabled = false;
-      btn.textContent = 'Pay Now →';
-    }
-  });
-  handler.openIframe();
-}
+  function onPaymentClose() {
+    if (btn) { btn.disabled=false; btn.textContent='Pay Now →'; }
+  }
 
-// ── OPTIONAL ACCOUNT CREATION ────────────────────────────────
-function toggleAccountFields() {
-  const show = document.getElementById('createAccountCheck').checked;
-  document.getElementById('accountFields').classList.toggle('show', show);
+  try {
+    const handler = PaystackPop.setup({
+      key:      PAYSTACK_KEY,
+      email:    email,
+      amount:   total * 100,
+      currency: 'NGN',
+      ref:      ref,
+      callback: onPaymentSuccess,
+      onClose:  onPaymentClose
+    });
+    handler.openIframe();
+  } catch(e) {
+    console.error('Paystack error:', e);
+    if (btn) { btn.disabled=false; btn.textContent='Pay Now →'; }
+    alert('Payment could not open: ' + e.message);
+  }
 }
 
 async function createGuestAccount() {
@@ -3941,6 +3971,18 @@ function toggleProfile() {
   } else {
     openProfile();
   }
+}
+
+
+// ============================================================
+// PASSWORD TOGGLE
+// ============================================================
+function togglePwd(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.textContent = show ? '🙈' : '👁';
 }
 
 // ============================================================
