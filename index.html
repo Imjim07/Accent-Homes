@@ -6,6 +6,11 @@
 <title>Accent Homes | Luxury Short-Let Residences, Asaba</title>
 <meta name="description" content="Luxury short-let residences in Asaba, Delta State. Impeccably furnished apartments for discerning guests who refuse to compromise on elegance.">
 
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232B2B2B'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='central' text-anchor='middle' font-family='Georgia%2Cserif' font-size='21' font-weight='400' fill='%238B5E3C'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%232B2B2B'/%3E%3Ctext x='50%25' y='52%25' dominant-baseline='central' text-anchor='middle' font-family='Georgia%2Cserif' font-size='120' font-weight='400' fill='%238B5E3C'%3EA%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#2B2B2B">
+
 <!-- Paystack -->
 <script src="https://js.paystack.co/v1/inline.js"></script>
 <!-- Firebase -->
@@ -44,6 +49,7 @@
 *,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
 html { scroll-behavior:smooth; }
 body { font-family:var(--font-body); background:#F8F8F8; color:#4A4A4A; line-height:1.6; overflow-x:hidden; }
+@media(max-width:767px) { body { padding-bottom:72px; } }
 img { max-width:100%; display:block; }
 a { text-decoration:none; color:inherit; }
 button { cursor:pointer; font-family:var(--font-body); }
@@ -344,7 +350,7 @@ section { padding:100px 0; }
 .listing-card:hover .card-img img { opacity:0.92; }
 
 /* Card internal image slider */
-.card-slides { position:relative; width:100%; height:100%; }
+.card-slides { position:absolute; inset:0; }
 .card-slide { position:absolute; inset:0; opacity:0; transition:opacity 0.45s ease; }
 .card-slide.active { opacity:1; }
 .card-slide img { width:100%; height:100%; object-fit:cover; }
@@ -660,6 +666,9 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   text-decoration:none;
 }
 .wa-float:hover { transform:scale(1.1); box-shadow:0 8px 28px rgba(37,211,102,0.6); }
+@media(max-width:767px) {
+  .wa-float { bottom:88px; right:20px; width:48px; height:48px; font-size:1.3rem; }
+}
 
 
 /* APARTMENT DETAIL MODAL */
@@ -1448,23 +1457,59 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
 
 /* Booking History */
 .booking-history-item {
-  background:var(--ash-faint); border-radius:var(--radius-lg);
-  padding:16px; margin-bottom:12px; border:1px solid var(--ash-faint);
+  background:var(--white); border-radius:var(--radius-lg);
+  padding:18px; margin-bottom:12px;
+  border:1px solid var(--ash-faint);
   transition:all var(--transition);
+  box-shadow:var(--shadow-sm);
 }
-.booking-history-item:hover { border-color:rgba(61,61,61,0.2); }
-.bh-ref { font-size:0.65rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ash-lt); margin-bottom:4px; }
-.bh-apt { font-family:var(--font-display); font-size:1rem; color:var(--charcoal); margin-bottom:6px; font-weight:400; }
-.bh-dates { font-size:0.78rem; color:var(--ash-lt); margin-bottom:8px; }
-.bh-footer { display:flex; align-items:center; justify-content:space-between; }
-.bh-amount { font-family:var(--font-display); font-size:1.1rem; color:var(--charcoal); }
+.booking-history-item:hover { border-color:rgba(61,61,61,0.18); box-shadow:var(--shadow-md); }
+.bh-top {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:8px;
+}
+.bh-ref {
+  font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--ash-lt); font-weight:600;
+}
+.bh-apt {
+  font-family:var(--font-display); font-size:1.05rem;
+  color:var(--charcoal); margin-bottom:14px; font-weight:400; line-height:1.2;
+}
+.bh-dates-row {
+  display:flex; align-items:center; gap:10px;
+  background:var(--ash-faint); border-radius:var(--radius);
+  padding:10px 12px; margin-bottom:14px; flex-wrap:wrap;
+}
+.bh-date-block { display:flex; flex-direction:column; gap:2px; }
+.bh-date-lbl { font-size:0.6rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--ash-lt); font-weight:600; }
+.bh-date-val { font-size:0.82rem; color:var(--charcoal); font-weight:600; }
+.bh-date-arrow { color:var(--ash-lt); font-size:0.75rem; margin:0 2px; align-self:center; }
+.bh-nights-block { margin-left:auto; text-align:right; }
+.bh-footer {
+  display:flex; align-items:center; justify-content:space-between;
+  padding-top:12px; border-top:1px solid var(--ash-faint);
+}
+.bh-amount-wrap { display:flex; flex-direction:column; gap:1px; }
+.bh-amount-lbl { font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ash-lt); font-weight:600; }
+.bh-amount { font-family:var(--font-display); font-size:1.2rem; color:var(--charcoal); font-weight:500; }
+.bh-wa-btn {
+  font-size:0.7rem; font-weight:700; letter-spacing:0.06em; text-transform:uppercase;
+  background:#25D366; color:#fff; padding:7px 14px; border-radius:var(--radius);
+  text-decoration:none; transition:all var(--transition);
+}
+.bh-wa-btn:hover { background:#1ebe5a; }
 .bh-status {
   font-size:0.65rem; font-weight:700; letter-spacing:0.08em;
-  text-transform:uppercase; padding:3px 10px; border-radius:20px;
+  text-transform:uppercase; padding:4px 12px; border-radius:20px;
 }
 .bh-confirmed { background:rgba(45,106,79,0.1); color:var(--green); }
 .bh-pending   { background:rgba(201,169,110,0.15); color:#8B6914; }
 .bh-empty { text-align:center; padding:32px 0; color:var(--ash-lt); font-style:italic; font-size:0.875rem; }
+.bh-empty-state { text-align:center; padding:40px 16px; }
+.bh-empty-icon { font-size:2.8rem; margin-bottom:12px; }
+.bh-empty-title { font-family:var(--font-display); font-size:1.1rem; color:var(--charcoal); margin-bottom:6px; font-weight:400; }
+.bh-empty-sub { font-size:0.82rem; color:var(--ash-lt); line-height:1.7; max-width:260px; margin:0 auto; }
 
 /* Sign out */
 .profile-signout {
@@ -1837,6 +1882,123 @@ footer { background:#2B2B2B; padding:72px 0 36px; }
   transition:color 0.2s; line-height:1;
 }
 .pwd-toggle:hover { color:var(--ash); }
+
+/* ============================================================
+   MOBILE — COMPREHENSIVE RESPONSIVE FIXES
+   ============================================================ */
+
+/* ── 960px (tablets & narrow desktops) ── */
+@media(max-width:960px) {
+  .testimonials-grid { grid-template-columns:repeat(2,1fr); }
+}
+
+/* ── 767px (all phones) ── */
+@media(max-width:767px) {
+  /* Nav */
+  #nav { padding:14px 20px; }
+
+  /* Hero */
+  .hero-content { padding:0 20px; }
+  .hero-title { font-size:clamp(2.4rem,9vw,3.4rem); }
+  .hero-sub { font-size:0.9rem; margin-bottom:32px; }
+  .hero-actions { flex-direction:column; align-items:center; gap:10px; }
+  .btn-primary, .btn-ghost { width:100%; max-width:320px; text-align:center; }
+
+  /* Sections */
+  section { padding:64px 0; }
+  .container { padding:0 20px; }
+
+  /* Listings carousel */
+  .listing-card { flex:0 0 calc(100vw - 48px); }
+
+  /* Testimonials */
+  .testimonials-grid { grid-template-columns:1fr; }
+
+  /* Gallery */
+  .gallery-grid { grid-template-columns:1fr 1fr; grid-template-rows:auto; }
+  .g-item.tall { grid-row:auto; }
+
+  /* Bento */
+  .bento { grid-template-columns:1fr; }
+  .bento-card.wide, .bento-card.tall { grid-column:auto; grid-row:auto; }
+  .bento-card.tall { min-height:200px; }
+
+  /* Lagos notify form */
+  .lagos-form { flex-direction:column; }
+  .lagos-input {
+    border-right:1.5px solid rgba(139,94,60,0.3);
+    border-bottom:none;
+    border-radius:var(--radius) var(--radius) 0 0;
+  }
+  .lagos-btn { border-radius:0 0 var(--radius) var(--radius); padding:13px; }
+
+  /* Contact */
+  .cdetail { gap:10px; }
+
+  /* Footer */
+  footer { padding:56px 0 28px; }
+  .footer-bottom { flex-direction:column; gap:8px; text-align:center; }
+
+  /* Apt detail modal — full screen */
+  .apt-overlay { padding:0; align-items:flex-end; }
+  .apt-modal { max-height:96vh; border-radius:var(--radius-lg) var(--radius-lg) 0 0; }
+  .apt-modal-img-wrap { height:240px; }
+  .apt-modal-body { padding:20px; }
+  .apt-modal-name { font-size:1.4rem; }
+  .apt-modal-footer { flex-direction:column; align-items:flex-start; }
+
+  /* Profile sidebar — full width slide-in */
+  .profile-sidebar { max-width:100%; border-radius:0; }
+  .profile-panel { padding:20px 16px; }
+  /* Extra bottom space so sign-out isn't behind the bottom nav */
+  .profile-panel.active { padding-bottom:88px; }
+
+  /* Booking history date row — wrap gracefully */
+  .bh-dates-row { gap:8px; }
+  .bh-nights-block { margin-left:0; width:100%; border-top:1px solid rgba(61,61,61,0.07); padding-top:8px; margin-top:4px; flex-direction:row; justify-content:space-between; }
+}
+
+/* ── 480px (small phones) ── */
+@media(max-width:480px) {
+  /* Nav */
+  #nav { padding:12px 16px; }
+  .nav-logo .wordmark { font-size:1.3rem; }
+  .nav-logo .tagline  { display:none; }
+
+  /* Hero */
+  .hero-title { font-size:clamp(2rem,10vw,2.8rem); }
+  .hero-eyebrow { font-size:0.6rem; }
+
+  /* Sections */
+  section { padding:52px 0; }
+  .container { padding:0 16px; }
+  .section-title { font-size:clamp(1.7rem,6vw,2.2rem); }
+
+  /* Strip */
+  .strip-item { padding:0 24px; font-size:0.65rem; }
+
+  /* Bento */
+  .bento-num { font-size:2.6rem; }
+
+  /* Neighbourhood tabs — scrollable row */
+  .nb-tabs { flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; }
+  .nb-tab  { flex-shrink:0; }
+
+  /* Place cards single column */
+  .places-grid { grid-template-columns:1fr; }
+
+  /* Lagos areas */
+  .lagos-area { padding:10px 14px; }
+
+  /* Form */
+  .form-row { grid-template-columns:1fr; }
+
+  /* Footer */
+  .footer-grid { gap:28px; }
+
+  /* Mobile nav labels smaller */
+  .mob-item { font-size:0.5rem; }
+}
 
 </style>
 </head>
@@ -2875,7 +3037,7 @@ async function loadListings(){
           </div>`;
         })()}
         <button class="card-heart" onclick="event.stopPropagation();this.classList.toggle('liked')" title="Save">♡</button>
-        <span class="card-badge ${l.status==='booked'?'badge-booked':'badge-avail'}">
+        <span class="card-badge ${l.status==='booked'?'badge-booked':'badge-available'}">
           ${l.status==='booked'?'Booked':'Available'}
         </span>
       </div>
@@ -3780,36 +3942,79 @@ async function loadBookingHistory() {
   try {
     let bookings = [];
     if (fbReady) {
-      const snap = await db.collection('bookings')
-        .where('email', '==', currentUser.email)
-        .orderBy('createdAt', 'desc')
-        .get();
-      bookings = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      // Query by email AND by guestUid so bookings are found regardless of how they were saved
+      const [byEmail, byUid] = await Promise.all([
+        db.collection('bookings').where('email', '==', currentUser.email).orderBy('createdAt', 'desc').get(),
+        db.collection('bookings').where('guestUid', '==', currentUser.uid).orderBy('createdAt', 'desc').get()
+      ]);
+      const seen = new Set();
+      [...byEmail.docs, ...byUid.docs].forEach(d => {
+        if (!seen.has(d.id)) { seen.add(d.id); bookings.push({ id:d.id, ...d.data() }); }
+      });
+      // Sort newest first
+      bookings.sort((a, b) => {
+        const ta = a.createdAt?.seconds || 0;
+        const tb = b.createdAt?.seconds || 0;
+        return tb - ta;
+      });
     } else {
       const all = JSON.parse(localStorage.getItem('ah_bookings') || '[]');
-      bookings = all.filter(b => b.email === currentUser.email);
+      bookings = all.filter(b => b.email === currentUser.email || b.guestUid === currentUser.uid);
     }
 
     if (!bookings.length) {
-      listEl.innerHTML = '<div class="bh-empty">No bookings yet. Your booking history will appear here.</div>';
+      listEl.innerHTML = `
+        <div class="bh-empty-state">
+          <div class="bh-empty-icon">🏡</div>
+          <div class="bh-empty-title">No bookings yet</div>
+          <div class="bh-empty-sub">Your booking history will appear here once you make a reservation.</div>
+        </div>`;
       return;
     }
 
-    listEl.innerHTML = bookings.map(b => `
+    listEl.innerHTML = bookings.map(b => {
+      const isConfirmed = b.status === 'confirmed' || b.status === 'approved';
+      const nights = b.nights || '?';
+      const nightLabel = Number(nights) === 1 ? '1 night' : `${nights} nights`;
+      const checkIn  = b.checkIn  || '—';
+      const checkOut = b.checkOut || '—';
+      const total    = b.total ? '₦' + Number(b.total).toLocaleString() : '—';
+      const ref      = (b.ref || b.id || '').toString().toUpperCase().slice(-8);
+      return `
       <div class="booking-history-item">
-        <div class="bh-ref">Ref: ${b.ref || b.id}</div>
-        <div class="bh-apt">${b.apartment || '—'}</div>
-        <div class="bh-dates">📅 ${b.checkIn||'—'} → ${b.checkOut||'—'} · ${b.nights||'?'} night${(b.nights||1)>1?'s':''}</div>
-        <div class="bh-footer">
-          <div class="bh-amount">₦${Number(b.total||0).toLocaleString()}</div>
-          <span class="bh-status ${b.status==='confirmed'||b.status==='approved'?'bh-confirmed':'bh-pending'}">
-            ${b.status==='confirmed'||b.status==='approved'?'✓ Confirmed':'⏳ Pending'}
+        <div class="bh-top">
+          <span class="bh-ref">#${ref}</span>
+          <span class="bh-status ${isConfirmed ? 'bh-confirmed' : 'bh-pending'}">
+            ${isConfirmed ? '✓ Confirmed' : '⏳ Pending'}
           </span>
         </div>
-      </div>
-    `).join('');
+        <div class="bh-apt">${b.apartment || '—'}</div>
+        <div class="bh-dates-row">
+          <div class="bh-date-block">
+            <span class="bh-date-lbl">Check-in</span>
+            <span class="bh-date-val">${checkIn}</span>
+          </div>
+          <div class="bh-date-arrow">→</div>
+          <div class="bh-date-block">
+            <span class="bh-date-lbl">Check-out</span>
+            <span class="bh-date-val">${checkOut}</span>
+          </div>
+          <div class="bh-date-block bh-nights-block">
+            <span class="bh-date-lbl">Duration</span>
+            <span class="bh-date-val">${nightLabel}</span>
+          </div>
+        </div>
+        <div class="bh-footer">
+          <div class="bh-amount-wrap">
+            <span class="bh-amount-lbl">Total Paid</span>
+            <span class="bh-amount">${total}</span>
+          </div>
+          ${b.phone ? `<a href="https://wa.me/${b.phone.replace(/\D/g,'')}" target="_blank" class="bh-wa-btn">WhatsApp</a>` : ''}
+        </div>
+      </div>`;
+    }).join('');
   } catch(e) {
-    listEl.innerHTML = '<div class="bh-empty">Could not load bookings.</div>';
+    listEl.innerHTML = '<div class="bh-empty">Could not load bookings. Please try again.</div>';
   }
 }
 
@@ -4024,18 +4229,17 @@ async function openAptModal(id) {
   aptImgIndex = 0;
 
   // Populate gallery
-  const imgEl = document.getElementById('aptGalleryImg');
+  const imgEl = document.getElementById('aptModalImg');
   if (imgEl) imgEl.src = aptImgList[0];
   updateAptPhotoCount();
 
   // Populate text
   const set = (id, val) => { const el=document.getElementById(id); if(el) el.textContent=val; };
-  set('aptLocation', '📍 ' + (l.location || 'Asaba, Delta State'));
-  set('aptName',     l.name);
-  set('aptDesc',     l.description || '');
-  set('aptPrice',    '₦' + Number(l.priceNight||0).toLocaleString());
-  set('aptCaution',  l.cautionDeposit ? '+ ₦' + Number(l.cautionDeposit).toLocaleString() + ' caution (refundable)' : '');
-  set('aptFooterPrice', '₦' + Number(l.priceNight||0).toLocaleString());
+  set('aptModalLoc',   '📍 ' + (l.location || 'Asaba, Delta State'));
+  set('aptModalName',  l.name);
+  set('aptModalDesc',  l.description || '');
+  set('aptModalPrice', '₦' + Number(l.priceNight||0).toLocaleString());
+  set('aptModalCaution', l.cautionDeposit ? '+ ₦' + Number(l.cautionDeposit).toLocaleString() + ' caution (refundable)' : '');
 
   // Amenities grid
   const AMENITY_MAP = {
@@ -4057,22 +4261,22 @@ async function openAptModal(id) {
   };
   const amenities = [...(l.amenities || [])];
   if (l.bedrooms) amenities.push(l.bedrooms + ' Bedroom' + (l.bedrooms > 1 ? 's' : ''));
-  const amenEl = document.getElementById('aptAmenities');
+  const amenEl = document.getElementById('aptAmenitiesGrid');
   if (amenEl) amenEl.innerHTML = amenities.map(a => {
     const key  = a.toLowerCase().trim();
     const info = AMENITY_MAP[key] || { icon:'✓', desc: a };
-    return `<div class="amenity-item">
-      <div class="amenity-ico">${info.icon}</div>
-      <div class="amenity-label">${info.desc}</div>
+    return `<div class="amenity-detail-item">
+      <div class="amenity-detail-icon">${info.icon}</div>
+      <div class="amenity-detail-name">${info.desc}</div>
     </div>`;
   }).join('');
 
   // WhatsApp button
-  const waBtn = document.getElementById('aptWaBtn');
+  const waBtn = document.getElementById('aptModalWA');
   if (waBtn) waBtn.href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent('Hello Accent Homes, I am interested in ' + l.name);
 
   // Book button
-  const bookBtn = document.getElementById('aptBookBtn');
+  const bookBtn = document.getElementById('aptModalBookBtn');
   if (bookBtn) {
     if (l.status === 'booked') {
       bookBtn.textContent = 'Currently Booked';
@@ -4102,13 +4306,13 @@ function handleAptBdrop(e) {
 
 function aptNav(dir) {
   aptImgIndex = (aptImgIndex + dir + aptImgList.length) % aptImgList.length;
-  const imgEl = document.getElementById('aptGalleryImg');
+  const imgEl = document.getElementById('aptModalImg');
   if (imgEl) imgEl.src = aptImgList[aptImgIndex];
   updateAptPhotoCount();
 }
 
 function updateAptPhotoCount() {
-  const el = document.getElementById('aptPhotoCount');
+  const el = document.getElementById('aptImgCounter');
   if (el && aptImgList.length > 1) {
     el.textContent = (aptImgIndex + 1) + ' / ' + aptImgList.length;
   } else if (el) {
@@ -4153,8 +4357,101 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ============================================================
+// FUNCTION ALIASES — HTML uses these names
+// ============================================================
+function aptModalBook()           { aptBook(); }
+function closeAptModal()          { closeApt(); }
+function handleAptOverlayClick(e) { handleAptBdrop(e); }
+function aptImgNav(dir)           { aptNav(dir); }
+function switchPsTab(tab, btn)    { switchProfileTab(tab, btn); }
+function toggleAccountFields() {
+  const f = document.getElementById('accountFields');
+  if (f) f.classList.toggle('show');
+}
+
+// ============================================================
+// CAROUSEL
+// ============================================================
+let carouselIndex = 0;
+let carouselTotal = 0;
+
+function initCarousel(count) {
+  carouselTotal = count;
+  if (count <= 1) return;
+
+  const wrapper  = document.getElementById('carouselWrapper');
+  const nav      = document.getElementById('carouselNav');
+  const dotsEl   = document.getElementById('carouselDots');
+  if (!wrapper || !nav) return;
+
+  const cardW    = 360 + 24; // card width + gap
+  const visible  = Math.max(1, Math.floor(wrapper.offsetWidth / cardW));
+  const pages    = Math.max(1, count - visible + 1);
+
+  if (pages > 1) {
+    nav.style.display = '';
+    dotsEl.innerHTML  = Array.from({length: pages}, (_, i) =>
+      `<button class="carousel-dot${i===0?' active':''}" onclick="carouselGoTo(${i})"></button>`
+    ).join('');
+  }
+  carouselIndex = 0;
+  updateCarouselUI(visible, pages);
+}
+
+function carouselGoTo(idx) {
+  const wrapper = document.getElementById('carouselWrapper');
+  if (!wrapper) return;
+  const cardW   = 360 + 24;
+  const visible = Math.max(1, Math.floor(wrapper.offsetWidth / cardW));
+  const pages   = Math.max(1, carouselTotal - visible + 1);
+
+  carouselIndex = Math.max(0, Math.min(idx, pages - 1));
+  const grid = document.getElementById('listingsGrid');
+  if (grid) grid.style.transform = 'translateX(-' + (carouselIndex * cardW) + 'px)';
+  updateCarouselUI(visible, pages);
+}
+
+function carouselPrev() { carouselGoTo(carouselIndex - 1); }
+function carouselNext() { carouselGoTo(carouselIndex + 1); }
+
+function updateCarouselUI(visible, pages) {
+  document.querySelectorAll('.carousel-dot').forEach((d, i) =>
+    d.classList.toggle('active', i === carouselIndex)
+  );
+  const count = document.getElementById('carouselCount');
+  if (count) count.textContent = (carouselIndex + 1) + ' / ' + pages;
+  const prev = document.getElementById('prevBtn');
+  const next = document.getElementById('nextBtn');
+  if (prev) prev.disabled = carouselIndex === 0;
+  if (next) next.disabled = carouselIndex >= pages - 1;
+}
+
+// ============================================================
+// CARD IMAGE NAVIGATION
+// ============================================================
+function cardImgNav(id, dir) {
+  const slides = document.getElementById('slides_' + id);
+  if (!slides) return;
+  const all = slides.querySelectorAll('.card-slide');
+  if (!all.length) return;
+  const cur = slides.querySelector('.card-slide.active');
+  let idx = Array.from(all).indexOf(cur);
+  idx = (idx + dir + all.length) % all.length;
+  cardImgGo(id, idx);
+}
+
+function cardImgGo(id, idx) {
+  const slides = document.getElementById('slides_' + id);
+  const dots   = document.getElementById('dots_' + id);
+  if (!slides) return;
+  slides.querySelectorAll('.card-slide').forEach((s, i) => s.classList.toggle('active', i === idx));
+  if (dots) dots.querySelectorAll('.card-img-dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+// ============================================================
 // INIT
 // ============================================================
+let currentAptData = null;
 initFB();
 initAuth();
 loadListings();
@@ -4170,7 +4467,7 @@ initReveal();
   <button class="mob-item" id="mni2" onclick="document.getElementById('neighbourhood').scrollIntoView({behavior:'smooth'});setMobNav(1)">
     <span class="mob-icon">🔍</span>Explore
   </button>
-  <button class="mob-item" id="mni3" onclick="switchPsTab('bookings',document.querySelector('.ps-tab:nth-child(2)'));openProfile();setMobNav(2)">
+  <button class="mob-item" id="mni3" onclick="openProfile();switchProfileTab('bookings',document.querySelector('.profile-tab:nth-child(2)'));setMobNav(2)">
     <span class="mob-icon">📋</span>Bookings
   </button>
   <button class="mob-item" id="mni4" onclick="openProfile();setMobNav(3)">
