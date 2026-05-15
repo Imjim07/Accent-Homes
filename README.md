@@ -23,3 +23,15 @@ for a real estate client based in Asaba, Nigeria.
 - Mobile-responsive design
 
 ## Project Structure
+/
+├── public/          # Frontend pages
+├── admin/           # Admin portal
+├── js/              # Firebase, Paystack, UI logic
+├── css/             # Stylesheets
+└── .env.example     # Environment variable template
+
+## Environment Variables
+FIREBASE_API_KEY=
+FIREBASE_PROJECT_ID=
+CLOUDINARY_CLOUD_NAME=
+PAYSTACK_PUBLIC_KEY=
